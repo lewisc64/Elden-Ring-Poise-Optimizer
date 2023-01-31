@@ -26,7 +26,7 @@ const ARMOR_NOTHING = {
   defenseHoly: 0,
 };
 
-const BULL_GOAT_TALISMAN_MULTIPLIER = 1.33;
+const BULL_GOAT_TALISMAN_MULTIPLIER = 4 / 3;
 
 const COMBO_LIMIT = 20;
 
@@ -246,21 +246,36 @@ const ArmorSelectionAggregator = ({ armorData, updateSelected }) => {
 
 const ArmorComboReadout = ({ combo }) => {
   return (
-    <article>
-      <p>Weight: {combo.weight}</p>
-      <p>Poise: {combo.poise}</p>
-      <ArmorReadout armor={combo.head} defaultExpanded={true} />
-      <ArmorReadout armor={combo.body} defaultExpanded={true} />
-      <ArmorReadout armor={combo.arms} defaultExpanded={true} />
-      <ArmorReadout armor={combo.legs} defaultExpanded={true} />
+    <article className="comboReadout">
+      <div className="details">
+        <div>
+          <p>Weight</p>
+          <p>{combo.weight}</p>
+        </div>
+        <div>
+          <p>Poise</p>
+          <p>{combo.poise}</p>
+        </div>
+        <div>
+          <p>Poise (Bull-Goat's)</p>
+          <p>{Math.trunc(combo.poise * BULL_GOAT_TALISMAN_MULTIPLIER)}</p>
+        </div>
+      </div>
+
+      <div className="combos">
+        <ArmorReadout armor={combo.head} defaultExpanded={true} />
+        <ArmorReadout armor={combo.body} defaultExpanded={true} />
+        <ArmorReadout armor={combo.arms} defaultExpanded={true} />
+        <ArmorReadout armor={combo.legs} defaultExpanded={true} />
+      </div>
     </article>
   );
 };
 
-const ResultsDialog = ({ armorData, combos, show, setShow }) => {
+const ResultsDialog = ({ combos, show, setShow }) => {
   if (show) {
     return (
-      <dialog open className="results">
+      <div className="results">
         <button
           onClick={() => {
             setShow(false);
@@ -268,7 +283,7 @@ const ResultsDialog = ({ armorData, combos, show, setShow }) => {
         >
           Close
         </button>
-        {armorData.length >= 1 ? (
+        {combos.length >= 1 ? (
           <ol>
             {combos.map((x) => (
               <li key={JSON.stringify(x)}>
@@ -277,9 +292,9 @@ const ResultsDialog = ({ armorData, combos, show, setShow }) => {
             ))}
           </ol>
         ) : (
-          <p>Select some more armor!</p>
+          <p>There are no possible combinations.</p>
         )}
-      </dialog>
+      </div>
     );
   } else {
     return <div></div>;

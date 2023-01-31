@@ -171,9 +171,57 @@ button:active {
 
 .results {
   position: fixed;
-  background-color: #555;
-  border: none;
-  top: 5rem;
-  height: 80vh;
+  top: 4rem;
+  left: 4rem;
+  width: calc(100vw - 8rem);
+  height: calc(100vh - 8rem);
   overflow-y: scroll;
+  background-color: #333;
+  padding: 0.5rem;
+}
+
+.results > button {
+  top: 0.5rem;
+  right: 0.5rem;
+  margin: 1rem;
+}
+
+.results > ol > li::marker {
+  font-size: 1.2rem;
+}
+
+.comboReadout {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+}
+
+.comboReadout > .combos {
+  display: flex;
+  justify-content: left;
+  flex-flow: wrap;
+  margin: 0.4rem;
+}
+
+.comboReadout > .details {
+  display: flex;
+  justify-content: flex-start;
+  text-align: center;
+  align-content: center;
+}
+
+.comboReadout > .details > div {
+  margin-left: 0.2rem;
+  margin-right: 0.2rem;
+  background-color: #444;
+  padding: 0.2rem;
+}
+
+.comboReadout > .details > div > p {
+  margin: 0.5rem;
+}
+
+.comboReadout > .details > div > p:last-child {
+  font-size: 1.2rem;
+  font-weight: bold;
 }
