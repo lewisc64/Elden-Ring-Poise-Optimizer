@@ -288,7 +288,7 @@ const ResultsDialog = ({ armorData, combos, show, setShow }) => {
 
 const PoiseCalculator = ({ armorData }) => {
   const [useBullGoats, setUseBullGoats] = React.useState(true);
-  const [targetPoise, setTargetPoise] = React.useState(89);
+  const [targetPoise, setTargetPoise] = React.useState(83);
   const [allowNothingForHead, setAllowNothingForHead] = React.useState(true);
   const [allowNothingForBody, setAllowNothingForBody] = React.useState(true);
   const [allowNothingForArms, setAllowNothingForArms] = React.useState(true);
