@@ -30,6 +30,10 @@ const BULL_GOAT_TALISMAN_MULTIPLIER = 4 / 3;
 
 const COMBO_LIMIT = 20;
 
+function applyBullGoatMultiplier(poise) {
+  return Math.trunc(poise * BULL_GOAT_TALISMAN_MULTIPLIER);
+}
+
 function getArmorOfSlot(armorData, slot) {
   return armorData.filter((x) => x.slot === slot);
 }
@@ -62,6 +66,17 @@ function createCombos(armorData, targetPoise) {
     }
   }
   return combos;
+}
+
+function calculateMaxAchievablePoise(armorData) {
+  let poise = 0;
+  for (let slot of ["head", "body", "arms", "legs"]) {
+    const poises = armorData.filter((x) => x.slot === slot).map((x) => x.poise);
+    if (poises.length >= 1) {
+      poise += Math.max(...poises);
+    }
+  }
+  return poise;
 }
 
 const Checkbox = ({ checked, updateChecked }) => {
@@ -258,7 +273,7 @@ const ArmorComboReadout = ({ combo }) => {
         </div>
         <div>
           <p>Poise (Bull-Goat's)</p>
-          <p>{Math.trunc(combo.poise * BULL_GOAT_TALISMAN_MULTIPLIER)}</p>
+          <p>{applyBullGoatMultiplier(combo.poise)}</p>
         </div>
       </div>
 
@@ -347,7 +362,13 @@ const PoiseCalculator = ({ armorData }) => {
   return (
     <div className="poiseCalculator">
       <div className="settings">
-        <p>Target Poise:</p>
+        <p>
+          Target Poise (max.{" "}
+          {useBullGoats
+            ? applyBullGoatMultiplier(calculateMaxAchievablePoise(armorData))
+            : calculateMaxAchievablePoise(armorData)}
+          ):
+        </p>
         <input
           placeholder="Target poise"
           value={targetPoise}
