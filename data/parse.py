@@ -80,7 +80,7 @@ def convert_cut_rate(value):
 def parse_data(armor_data):
     parsed = []
 
-    for name in armor_data.get_names():
+    for name in sorted(armor_data.get_names()):
         row_object = armor_data.get_row_object_for_name(name)
 
         if int(row_object[HEADING_ROW_ID]) < MINIMUM_ID or name in UNOBTAINABLE:
@@ -98,6 +98,10 @@ def parse_data(armor_data):
 
         # correction for deathbed dress
         if name == "Deathbed Dress":
+            slot = "body"
+
+        # correction for fia's robe
+        if name == "Fia's Robe" or name == "Fia's Robe (Altered)":
             slot = "body"
 
         parsed.append({
