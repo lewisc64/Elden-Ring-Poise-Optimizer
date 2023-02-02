@@ -2,28 +2,6 @@ from bs4 import BeautifulSoup
 import requests
 import json
 
-UNOBTAINABLE = [
-    "Ragged Hat",
-    "Ragged Hat (Altered)",
-    "Ragged Armor",
-    "Ragged Armor (Altered)",
-    "Ragged Gloves",
-    "Ragged Loincloth",
-    "Millicent's Robe",
-    "Millicent's Tunic",
-    "Millicent's Gloves",
-    "Millicent's Boots",
-    "Brave's Leather Helm",
-    "Brave's Cord Circlet",
-    "Brave's Battlewear",
-    "Brave's Battlewear (Altered)",
-    "Brave's Bracer",
-    "Brave's Legwraps",
-    "Golden Prosthetic",
-    "Deathbed Smalls",
-    "Grass Hair Ornament",
-]
-
 HEADING_ORDER = [
     "defensePhysical",
     "defensePhysicalStrike",
@@ -49,9 +27,6 @@ def extract_from_html(content, slot):
         if name_cell is None:
             continue
         name = name_cell.find_all("a")[-1].get_text().strip()
-
-        if name in UNOBTAINABLE:
-            continue
 
         armor = {
             "name": name,

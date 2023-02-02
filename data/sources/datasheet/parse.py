@@ -1,28 +1,6 @@
 import csv
 import json
 
-UNOBTAINABLE = [
-    "Ragged Hat",
-    "Ragged Hat (Altered)",
-    "Ragged Armor",
-    "Ragged Armor (Altered)",
-    "Ragged Gloves",
-    "Ragged Loincloth",
-    "Millicent's Robe",
-    "Millicent's Tunic",
-    "Millicent's Gloves",
-    "Millicent's Boots",
-    "Brave's Leather Helm",
-    "Brave's Cord Circlet",
-    "Brave's Battlewear",
-    "Brave's Battlewear (Altered)",
-    "Brave's Bracer",
-    "Brave's Legwraps",
-    "Golden Prosthetic",
-    "Deathbed Smalls",
-    "Grass Hair Ornament",
-]
-
 SLOT_MAP = {
     "Head": "head",
     "Body": "body",
@@ -39,13 +17,8 @@ armor_data = []
 headings = rows[0]
 
 for row in rows[1:]:
-
-    name = row[headings.index("Name")]
-    if name in UNOBTAINABLE:
-        continue
-
     armor = {
-        "name": name,
+        "name": row[headings.index("Name")],
         "slot": SLOT_MAP[row[headings.index("Equip Slot")]],
         "weight": float(row[headings.index("Weight")]),
         "poise": int(row[headings.index("Poise")]),

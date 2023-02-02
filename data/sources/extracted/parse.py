@@ -5,28 +5,6 @@ HEADING_ROW_NAME = "Row Name"
 HEADING_ROW_ID = "Row ID"
 MINIMUM_ID = 40000
 
-UNOBTAINABLE = [
-    "Ragged Hat",
-    "Ragged Hat (Altered)",
-    "Ragged Armor",
-    "Ragged Armor (Altered)",
-    "Ragged Gloves",
-    "Ragged Loincloth",
-    "Millicent's Robe",
-    "Millicent's Tunic",
-    "Millicent's Gloves",
-    "Millicent's Boots",
-    "Brave's Leather Helm",
-    "Brave's Cord Circlet",
-    "Brave's Battlewear",
-    "Brave's Battlewear (Altered)",
-    "Brave's Bracer",
-    "Brave's Legwraps",
-    "Golden Prosthetic",
-    "Deathbed Smalls",
-    "Grass Hair Ornament",
-]
-
 
 class Table:
 
@@ -83,7 +61,7 @@ def parse_data(armor_data):
     for name in sorted(armor_data.get_names()):
         row_object = armor_data.get_row_object_for_name(name)
 
-        if int(row_object[HEADING_ROW_ID]) < MINIMUM_ID or name in UNOBTAINABLE:
+        if int(row_object[HEADING_ROW_ID]) < MINIMUM_ID:
             continue
 
         slot = "unknown"

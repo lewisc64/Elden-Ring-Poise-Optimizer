@@ -7,6 +7,28 @@ const SLOT_TITLES = {
   legs: "Greaves",
 };
 
+const UNOBTAINABLE_ARMOR_NAMES = [
+  "Ragged Hat",
+  "Ragged Hat (Altered)",
+  "Ragged Armor",
+  "Ragged Armor (Altered)",
+  "Ragged Gloves",
+  "Ragged Loincloth",
+  "Millicent's Robe",
+  "Millicent's Tunic",
+  "Millicent's Gloves",
+  "Millicent's Boots",
+  "Brave's Leather Helm",
+  "Brave's Cord Circlet",
+  "Brave's Battlewear",
+  "Brave's Battlewear (Altered)",
+  "Brave's Bracer",
+  "Brave's Legwraps",
+  "Golden Prosthetic",
+  "Deathbed Smalls",
+  "Grass Hair Ornament",
+];
+
 const ARMOR_NOTHING = {
   name: "Nothing",
   slot: "DEFINE",
@@ -535,7 +557,11 @@ const Main = () => {
   React.useEffect(() => {
     async function fetchData() {
       let response = await fetch("data/sources/datasheet/armor_data.json");
-      setArmorData(await response.json());
+      setArmorData(
+        (await response.json()).filter(
+          (x) => !UNOBTAINABLE_ARMOR_NAMES.includes(x.name) || true
+        )
+      );
       setHasLoadedData(true);
     }
     if (!hasLoadedData) {
