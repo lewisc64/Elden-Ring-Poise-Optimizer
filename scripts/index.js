@@ -39,8 +39,8 @@ const ARMOR_NOTHING = {
   focus: 0,
   vitality: 0,
   defensePhysical: 0,
-  defensePhysicalSlash: 0,
   defensePhysicalStrike: 0,
+  defensePhysicalSlash: 0,
   defensePhysicalPierce: 0,
   defenseMagic: 0,
   defenseFire: 0,
@@ -58,8 +58,8 @@ const ARMOR_ATTRIBUTE_NAME_MAP = {
   focus: "Focus",
   vitality: "Vitality",
   defensePhysical: "Physical Defense",
-  defensePhysicalSlash: "Physical Defense (slash)",
   defensePhysicalStrike: "Physical Defense (strike)",
+  defensePhysicalSlash: "Physical Defense (slash)",
   defensePhysicalPierce: "Physical Defense (pierce)",
   defenseMagic: "Magic Defense",
   defenseFire: "Fire Defense",
@@ -202,8 +202,8 @@ const ArmorReadout = ({ armor, defaultExpanded }) => {
           <div className="defenses">
             <h2>Defenses</h2>
             <p>Physical: {armor.defensePhysical}</p>
-            <p>Physical (slash): {armor.defensePhysicalSlash}</p>
             <p>Physical (strike): {armor.defensePhysicalStrike}</p>
+            <p>Physical (slash): {armor.defensePhysicalSlash}</p>
             <p>Physical (pierce): {armor.defensePhysicalPierce}</p>
             <p>Magic: {armor.defenseMagic}</p>
             <p>Fire: {armor.defenseFire}</p>
@@ -412,8 +412,8 @@ const PoiseCalculator = ({ armorData }) => {
     focus: 1,
     vitality: 0,
     defensePhysical: 10,
-    defensePhysicalSlash: 10,
     defensePhysicalStrike: 10,
+    defensePhysicalSlash: 10,
     defensePhysicalPierce: 10,
     defenseMagic: 10,
     defenseFire: 10,
