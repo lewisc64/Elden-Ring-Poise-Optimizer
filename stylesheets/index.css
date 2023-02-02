@@ -10,6 +10,24 @@ body {
   font-style: italic;
 }
 
+@keyframes pulse {
+  0% {
+    filter: brightness(100%);
+  }
+  50% {
+    filter: brightness(70%);
+  }
+  100% {
+    filter: brightness(100%);
+  }
+}
+
+.doingSomething {
+  animation-name: pulse;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
+}
+
 .monospaced {
   font-family: monospace;
 }
