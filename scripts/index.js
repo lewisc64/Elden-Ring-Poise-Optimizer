@@ -559,7 +559,7 @@ const Main = () => {
       let response = await fetch("data/sources/datasheet/armor_data.json");
       setArmorData(
         (await response.json()).filter(
-          (x) => !UNOBTAINABLE_ARMOR_NAMES.includes(x.name) || true
+          (x) => !UNOBTAINABLE_ARMOR_NAMES.includes(x.name)
         )
       );
       setHasLoadedData(true);
