@@ -30,10 +30,14 @@ function getArmorOfSlot(armorData, slot) {
 
 function createCombos(armorData, targetPoise) {
   const combos = [];
-  for (let head of getArmorOfSlot(armorData, "head")) {
-    for (let body of getArmorOfSlot(armorData, "body")) {
-      for (let arms of getArmorOfSlot(armorData, "arms")) {
-        for (let legs of getArmorOfSlot(armorData, "legs")) {
+  const headArmor = getArmorOfSlot(armorData, "head");
+  const bodyArmor = getArmorOfSlot(armorData, "body");
+  const armsArmor = getArmorOfSlot(armorData, "arms");
+  const legsArmor = getArmorOfSlot(armorData, "legs");
+  for (let head of headArmor) {
+    for (let body of bodyArmor) {
+      for (let arms of armsArmor) {
+        for (let legs of legsArmor) {
           const totalPoise = head.poise + body.poise + arms.poise + legs.poise;
           if (totalPoise == targetPoise) {
             const totalWeight =

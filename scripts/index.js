@@ -73,7 +73,12 @@ function applyBullGoatMultiplier(poise) {
   return Math.trunc(poise * BULL_GOAT_TALISMAN_MULTIPLIER);
 }
 
-function createCombosAsync(armorData, targetPoise, importances, callback) {
+function calculateTopCombosAsync(
+  armorData,
+  targetPoise,
+  importances,
+  callback
+) {
   const worker = new Worker("scripts/comboWorker.js");
   worker.onmessage = (e) => {
     callback(e.data);
@@ -403,7 +408,7 @@ const PoiseCalculator = ({ armorData }) => {
       }
 
       setIsProcessing(true);
-      createCombosAsync(
+      calculateTopCombosAsync(
         useData,
         Math.ceil(
           targetPoise / (useBullGoats ? BULL_GOAT_TALISMAN_MULTIPLIER : 1)
