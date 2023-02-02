@@ -10,6 +10,20 @@ body {
   font-style: italic;
 }
 
+.monospaced {
+  font-family: monospace;
+}
+
+.collapsablePanel > p {
+  user-select: none;
+  cursor: pointer;
+  background-color: #444;
+}
+
+.collapsablePanel > p {
+  padding: 0.5rem;
+}
+
 input {
   border: none;
   background-color: #999;
@@ -155,9 +169,8 @@ button:active {
   grid-column-gap: 1rem;
 }
 
-.poiseCalculator > .settings {
+.settings {
   display: grid;
-  max-width: 30rem;
   grid-template-columns: auto auto;
   grid-row-gap: 0.2rem;
   align-items: center;
@@ -165,7 +178,11 @@ button:active {
   padding: 1rem;
 }
 
-.poiseCalculator > .settings > p {
+.poiseCalculator > .collapsablePanel {
+  max-width: 30rem;
+}
+
+.settings > p {
   margin: 0;
 }
 

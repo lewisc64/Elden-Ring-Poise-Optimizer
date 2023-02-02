@@ -26,6 +26,25 @@ const ARMOR_NOTHING = {
   defenseHoly: 0,
 };
 
+const ARMOR_ATTRIBUTE_NAME_MAP = {
+  name: "Name",
+  slot: "Slot",
+  weight: "Weight",
+  poise: "Poise",
+  immunity: "Immunity",
+  robustness: "Robustness",
+  focus: "Focus",
+  vitality: "Vitality",
+  defensePhysical: "Physical Defense",
+  defensePhysicalSlash: "Physical Defense (slash)",
+  defensePhysicalStrike: "Physical Defense (strike)",
+  defensePhysicalPierce: "Physical Defense (pierce)",
+  defenseMagic: "Magic Defense",
+  defenseFire: "Fire Defense",
+  defenseLightning: "Lightning Defense",
+  defenseHoly: "Holy Defense",
+};
+
 const BULL_GOAT_TALISMAN_MULTIPLIER = 4 / 3;
 
 const COMBO_LIMIT = 20;
@@ -36,6 +55,30 @@ function applyBullGoatMultiplier(poise) {
 
 function getArmorOfSlot(armorData, slot) {
   return armorData.filter((x) => x.slot === slot);
+}
+
+function calculateScoreOfCombo(combo, importances) {
+  let totalDefense = 0;
+  let totalResistance = 0;
+  for (let slot of ["head", "body", "arms", "legs"]) {
+    totalDefense += combo[slot].defensePhysical * importances.defensePhysical;
+    totalDefense +=
+      combo[slot].defensePhysicalSlash * importances.defensePhysicalSlash;
+    totalDefense +=
+      combo[slot].defensePhysicalStrike * importances.defensePhysicalStrike;
+    totalDefense +=
+      combo[slot].defensePhysicalPierce * importances.defensePhysicalPierce;
+    totalDefense += combo[slot].defenseMagic * importances.defenseMagic;
+    totalDefense += combo[slot].defenseFire * importances.defenseFire;
+    totalDefense += combo[slot].defenseLightning * importances.defenseLightning;
+    totalDefense += combo[slot].defenseHoly * importances.defenseHoly;
+
+    totalResistance += combo[slot].immunity * importances.immunity;
+    totalResistance += combo[slot].robustness * importances.robustness;
+    totalResistance += combo[slot].focus * importances.focus;
+    totalResistance += combo[slot].vitality * importances.vitality;
+  }
+  return -combo.weight * importances.weight + totalDefense + totalResistance;
 }
 
 function createCombos(armorData, targetPoise) {
@@ -88,6 +131,23 @@ const Checkbox = ({ checked, updateChecked }) => {
       }}
     >
       {checked ? "YES" : "NO"}
+    </div>
+  );
+};
+
+const CollapsablePanel = ({ title, collapsedByDefault, children }) => {
+  const [isCollapsed, setIsCollapsed] = React.useState(collapsedByDefault);
+
+  return (
+    <div className="collapsablePanel">
+      <p
+        onClick={() => {
+          setIsCollapsed(!isCollapsed);
+        }}
+      >
+        <span className="monospaced">{isCollapsed ? "+" : "-"}</span> {title}
+      </p>
+      {isCollapsed ? null : children}
     </div>
   );
 };
@@ -323,10 +383,34 @@ const PoiseCalculator = ({ armorData }) => {
   const [allowNothingForBody, setAllowNothingForBody] = React.useState(true);
   const [allowNothingForArms, setAllowNothingForArms] = React.useState(true);
   const [allowNothingForLegs, setAllowNothingForLegs] = React.useState(true);
+  const [importances, setImportances] = React.useState({
+    weight: 1000000,
+    immunity: 1,
+    robustness: 1,
+    focus: 1,
+    vitality: 0,
+    defensePhysical: 10,
+    defensePhysicalSlash: 10,
+    defensePhysicalStrike: 10,
+    defensePhysicalPierce: 10,
+    defenseMagic: 10,
+    defenseFire: 10,
+    defenseLightning: 10,
+    defenseHoly: 10,
+  });
 
   const [topCombos, setTopCombos] = React.useState([]);
   const [shouldCalculate, setShouldCalculate] = React.useState(false);
   const [showResults, setShowResults] = React.useState(false);
+
+  const setImportance = React.useCallback(
+    (importanceName, value) => {
+      const newImportances = { ...importances };
+      newImportances[importanceName] = parseFloat(value);
+      setImportances(newImportances);
+    },
+    [importances]
+  );
 
   React.useEffect(() => {
     if (shouldCalculate) {
@@ -353,7 +437,13 @@ const PoiseCalculator = ({ armorData }) => {
         )
       );
       setTopCombos(
-        combos.sort((a, b) => a.weight - b.weight).slice(0, COMBO_LIMIT)
+        combos
+          .sort(
+            (a, b) =>
+              calculateScoreOfCombo(b, importances) -
+              calculateScoreOfCombo(a, importances)
+          )
+          .slice(0, COMBO_LIMIT)
       );
       setShowResults(true);
     }
@@ -361,44 +451,64 @@ const PoiseCalculator = ({ armorData }) => {
 
   return (
     <div className="poiseCalculator">
-      <div className="settings">
-        <p>
-          Target Poise (max.{" "}
-          {useBullGoats
-            ? applyBullGoatMultiplier(calculateMaxAchievablePoise(armorData))
-            : calculateMaxAchievablePoise(armorData)}
-          ):
-        </p>
-        <input
-          placeholder="Target poise"
-          value={targetPoise}
-          onChange={(e) => {
-            setTargetPoise(parseInt(e.target.value));
-          }}
-        ></input>
-        <p>Use Bull-Goat's Talisman?:</p>
-        <Checkbox checked={useBullGoats} updateChecked={setUseBullGoats} />
-        <p>Allow nothing for helm?:</p>
-        <Checkbox
-          checked={allowNothingForHead}
-          updateChecked={setAllowNothingForHead}
-        />
-        <p>Allow nothing for chest?:</p>
-        <Checkbox
-          checked={allowNothingForBody}
-          updateChecked={setAllowNothingForBody}
-        />
-        <p>Allow nothing for gauntlets?:</p>
-        <Checkbox
-          checked={allowNothingForArms}
-          updateChecked={setAllowNothingForArms}
-        />
-        <p>Allow nothing for greaves?:</p>
-        <Checkbox
-          checked={allowNothingForLegs}
-          updateChecked={setAllowNothingForLegs}
-        />
-      </div>
+      <CollapsablePanel title="Selection Settings" collapsedByDefault={false}>
+        <div className="settings">
+          <p>
+            Target Poise (max.{" "}
+            {useBullGoats
+              ? applyBullGoatMultiplier(calculateMaxAchievablePoise(armorData))
+              : calculateMaxAchievablePoise(armorData)}
+            ):
+          </p>
+          <input
+            placeholder="Target poise"
+            type="number"
+            value={targetPoise}
+            onChange={(e) => {
+              setTargetPoise(parseInt(e.target.value));
+            }}
+          ></input>
+          <p>Use Bull-Goat's Talisman?:</p>
+          <Checkbox checked={useBullGoats} updateChecked={setUseBullGoats} />
+          <p>Allow nothing for helm?:</p>
+          <Checkbox
+            checked={allowNothingForHead}
+            updateChecked={setAllowNothingForHead}
+          />
+          <p>Allow nothing for chest?:</p>
+          <Checkbox
+            checked={allowNothingForBody}
+            updateChecked={setAllowNothingForBody}
+          />
+          <p>Allow nothing for gauntlets?:</p>
+          <Checkbox
+            checked={allowNothingForArms}
+            updateChecked={setAllowNothingForArms}
+          />
+          <p>Allow nothing for greaves?:</p>
+          <Checkbox
+            checked={allowNothingForLegs}
+            updateChecked={setAllowNothingForLegs}
+          />
+        </div>
+      </CollapsablePanel>
+      <CollapsablePanel title="Sorting Settings" collapsedByDefault={true}>
+        <div className="settings">
+          {Object.keys(importances).map((x) => (
+            <React.Fragment key={x}>
+              <p>{ARMOR_ATTRIBUTE_NAME_MAP[x]} importance:</p>
+              <input
+                placeholder={`${ARMOR_ATTRIBUTE_NAME_MAP[x]} importance`}
+                type="number"
+                value={importances[x]}
+                onChange={(e) => {
+                  setImportance(x, e.target.value);
+                }}
+              ></input>
+            </React.Fragment>
+          ))}
+        </div>
+      </CollapsablePanel>
       <button
         onClick={() => {
           setShouldCalculate(true);
@@ -424,7 +534,7 @@ const Main = () => {
 
   React.useEffect(() => {
     async function fetchData() {
-      let response = await fetch("data/armor_data.json");
+      let response = await fetch("data/sources/datasheet/armor_data.json");
       setArmorData(await response.json());
       setHasLoadedData(true);
     }
