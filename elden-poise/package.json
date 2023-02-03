@@ -38,5 +38,6 @@
   "prettier": {
     "singleQuote": true,
     "jsxSingleQuote": false
-  }
+  },
+  "homepage": "https://lewisc64.github.io/Elden-Ring-Poise-Optimizer"
 }
