@@ -3,7 +3,7 @@ const COMBO_LIMIT = 20;
 function calculateScoreOfCombo(combo, importances) {
   let totalDefense = 0;
   let totalResistance = 0;
-  for (let slot of ["head", "body", "arms", "legs"]) {
+  for (let slot of ['head', 'body', 'arms', 'legs']) {
     totalDefense += combo[slot].defensePhysical * importances.defensePhysical;
     totalDefense +=
       combo[slot].defensePhysicalSlash * importances.defensePhysicalSlash;
@@ -30,10 +30,10 @@ function getArmorOfSlot(armorData, slot) {
 
 function createCombos(armorData, targetPoise) {
   const combos = [];
-  const headArmor = getArmorOfSlot(armorData, "head");
-  const bodyArmor = getArmorOfSlot(armorData, "body");
-  const armsArmor = getArmorOfSlot(armorData, "arms");
-  const legsArmor = getArmorOfSlot(armorData, "legs");
+  const headArmor = getArmorOfSlot(armorData, 'head');
+  const bodyArmor = getArmorOfSlot(armorData, 'body');
+  const armsArmor = getArmorOfSlot(armorData, 'arms');
+  const legsArmor = getArmorOfSlot(armorData, 'legs');
   for (let head of headArmor) {
     for (let body of bodyArmor) {
       for (let arms of armsArmor) {

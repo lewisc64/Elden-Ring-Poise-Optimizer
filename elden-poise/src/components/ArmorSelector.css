@@ -1,0 +1,36 @@
+.armorSelector > h1 {
+  margin: 0;
+}
+
+.armorSelector > ol {
+  margin: 0;
+  padding: 0;
+  height: 25rem;
+  overflow-y: scroll;
+}
+
+.armorSelector > ol > li {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+}
+
+.armorSelectionAggregator {
+  display: inline-flex;
+  flex-wrap: wrap;
+  grid-column-gap: 1rem;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.buttons > button {
+  margin-right: 0.5rem;
+}
+
+input.armorSearch {
+  width: 100%;
+}

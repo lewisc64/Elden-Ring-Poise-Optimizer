@@ -1,0 +1,18 @@
+.checkbox {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  background-color: #777;
+  text-align: center;
+  line-height: 2rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox.active {
+  background-color: #779;
+}
+
+.checkbox.inactive {
+  background-color: #977;
+}

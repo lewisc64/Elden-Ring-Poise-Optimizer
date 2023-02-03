@@ -1,0 +1,20 @@
+.results {
+  position: fixed;
+  top: 4rem;
+  left: 4rem;
+  width: calc(100vw - 8rem);
+  height: calc(100vh - 8rem);
+  overflow-y: scroll;
+  background-color: #333;
+  padding: 0.5rem;
+}
+
+.results > button {
+  top: 0.5rem;
+  right: 0.5rem;
+  margin: 1rem;
+}
+
+.results > ol > li::marker {
+  font-size: 1.2rem;
+}
