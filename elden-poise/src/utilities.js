@@ -1,21 +1,16 @@
-import { BULL_GOAT_TALISMAN_MULTIPLIER, WORKER_PATH } from './constants';
+import { BULL_GOAT_TALISMAN_MULTIPLIER } from './constants';
 
 export function applyBullGoatMultiplier(poise) {
   return Math.trunc(poise * BULL_GOAT_TALISMAN_MULTIPLIER);
 }
 
-export function calculateTopCombosAsync(
-  armorData,
-  targetPoise,
-  importances,
-  callback
-) {
-  const worker = new Worker(WORKER_PATH);
+export function calculateTopCombos(method, data, callback) {
+  const worker = new Worker(new URL('./comboWorker.js', import.meta.url));
   worker.onmessage = (e) => {
     callback(e.data);
     worker.terminate();
   };
-  worker.postMessage([armorData, targetPoise, importances]);
+  worker.postMessage({ method, data });
 }
 
 export function calculateMaxAchievablePoise(armorData) {

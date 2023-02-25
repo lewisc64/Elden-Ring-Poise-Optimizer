@@ -21,25 +21,26 @@ function calculateScoreOfCombo(combo, importances) {
     totalResistance += combo[slot].focus * importances.focus;
     totalResistance += combo[slot].vitality * importances.vitality;
   }
-  return -combo.weight * importances.weight + totalDefense + totalResistance;
+  return totalDefense + totalResistance;
 }
 
 function getArmorOfSlot(armorData, slot) {
   return armorData.filter((x) => x.slot === slot);
 }
 
-function createCombos(armorData, targetPoise) {
+function createCombosForTargetPoise(armorData, targetPoise) {
   const combos = [];
   const headArmor = getArmorOfSlot(armorData, 'head');
   const bodyArmor = getArmorOfSlot(armorData, 'body');
   const armsArmor = getArmorOfSlot(armorData, 'arms');
   const legsArmor = getArmorOfSlot(armorData, 'legs');
+
   for (let head of headArmor) {
     for (let body of bodyArmor) {
       for (let arms of armsArmor) {
         for (let legs of legsArmor) {
           const totalPoise = head.poise + body.poise + arms.poise + legs.poise;
-          if (totalPoise == targetPoise) {
+          if (totalPoise === targetPoise) {
             const totalWeight =
               Math.round(
                 (head.weight + body.weight + arms.weight + legs.weight) * 10
@@ -60,13 +61,66 @@ function createCombos(armorData, targetPoise) {
   return combos;
 }
 
+function createCombosForWeightLoad(armorData, weightLimit, belowLimit = 0.5) {
+  const combos = [];
+  const headArmor = getArmorOfSlot(armorData, 'head');
+  const bodyArmor = getArmorOfSlot(armorData, 'body');
+  const armsArmor = getArmorOfSlot(armorData, 'arms');
+  const legsArmor = getArmorOfSlot(armorData, 'legs');
+
+  let highestPoiseObserved = 0;
+
+  for (let head of headArmor) {
+    for (let body of bodyArmor) {
+      for (let arms of armsArmor) {
+        for (let legs of legsArmor) {
+          const totalPoise = head.poise + body.poise + arms.poise + legs.poise;
+          const totalWeight =
+            head.weight + body.weight + arms.weight + legs.weight;
+          if (totalPoise >= highestPoiseObserved && totalWeight < weightLimit) {
+            highestPoiseObserved = Math.max(highestPoiseObserved, totalPoise);
+            combos.push({
+              head: head,
+              body: body,
+              arms: arms,
+              legs: legs,
+              poise: totalPoise,
+              weight: Math.round(totalWeight * 10) / 10,
+            });
+          }
+        }
+      }
+    }
+  }
+  return combos;
+}
+
 onmessage = (e) => {
-  const [armorData, targetPoise, importances] = e.data;
-  const combos = createCombos(armorData, targetPoise);
-  combos.sort(
-    (a, b) =>
-      calculateScoreOfCombo(b, importances) -
-      calculateScoreOfCombo(a, importances)
-  );
+  let combos;
+  if (e.data.method === 'byTargetPoise') {
+    combos = createCombosForTargetPoise(
+      e.data.data.armorData,
+      e.data.data.targetPoise
+    );
+    combos
+      .sort(
+        (a, b) =>
+          calculateScoreOfCombo(b, e.data.data.importances) -
+          calculateScoreOfCombo(a, e.data.data.importances)
+      )
+      .sort((a, b) => a.weight - b.weight);
+  } else if (e.data.method === 'byWeightLimit') {
+    combos = createCombosForWeightLoad(
+      e.data.data.armorData,
+      e.data.data.weightLimit
+    );
+    combos
+      .sort(
+        (a, b) =>
+          calculateScoreOfCombo(b, e.data.data.importances) -
+          calculateScoreOfCombo(a, e.data.data.importances)
+      )
+      .sort((a, b) => b.poise - a.poise);
+  }
   postMessage(combos.slice(0, COMBO_LIMIT));
 };

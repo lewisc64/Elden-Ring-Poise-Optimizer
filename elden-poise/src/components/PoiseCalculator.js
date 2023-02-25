@@ -4,9 +4,11 @@ import {
   BULL_GOAT_TALISMAN_MULTIPLIER,
   ARMOR_ATTRIBUTE_NAME_MAP,
   DEFAULT_IMPORTANCES,
+  COMBO_CALCULATION_METHOD,
+  COMBO_CALCULATION_METHOD_SORT_LABEL,
 } from '../constants';
 import {
-  calculateTopCombosAsync,
+  calculateTopCombos,
   calculateMaxAchievablePoise,
   applyBullGoatMultiplier,
 } from '../utilities';
@@ -18,8 +20,13 @@ import ResultsDialog from './ResultsDialog';
 import './PoiseCalculator.css';
 
 const PoiseCalculator = ({ armorData }) => {
+  const [method, setMethod] = useState(
+    COMBO_CALCULATION_METHOD.BY_TARGET_POISE
+  );
   const [useBullGoats, setUseBullGoats] = useState(true);
-  const [targetPoise, setTargetPoise] = useState(83);
+  const [targetPoise, setTargetPoise] = useState(101);
+  const [equipLoadWhileNaked, setEquipLoadWhileNaked] = useState(16.6);
+  const [maxEquipLoad, setMaxEquipLoad] = useState(85.7);
   const [allowNothingForHead, setAllowNothingForHead] = useState(true);
   const [allowNothingForBody, setAllowNothingForBody] = useState(true);
   const [allowNothingForArms, setAllowNothingForArms] = useState(true);
@@ -59,21 +66,29 @@ const PoiseCalculator = ({ armorData }) => {
       }
 
       setIsProcessing(true);
-      calculateTopCombosAsync(
-        useData,
-        Math.ceil(
-          targetPoise / (useBullGoats ? BULL_GOAT_TALISMAN_MULTIPLIER : 1)
-        ),
-        importances,
-        (combos) => {
-          setTopCombos(combos);
-          setIsProcessing(false);
-          setShowResults(true);
-        }
+      const callback = (combos) => {
+        setTopCombos(combos);
+        setIsProcessing(false);
+        setShowResults(true);
+      };
+
+      calculateTopCombos(
+        method,
+        {
+          armorData: useData,
+          targetPoise: Math.ceil(
+            targetPoise / (useBullGoats ? BULL_GOAT_TALISMAN_MULTIPLIER : 1)
+          ),
+          importances: importances,
+          weightLimit:
+            Math.round((maxEquipLoad * 0.7 - equipLoadWhileNaked) * 10) / 10,
+        },
+        callback
       );
     }
   }, [
     armorData,
+    method,
     targetPoise,
     useBullGoats,
     shouldCalculate,
@@ -82,29 +97,74 @@ const PoiseCalculator = ({ armorData }) => {
     allowNothingForArms,
     allowNothingForLegs,
     importances,
+    maxEquipLoad,
+    equipLoadWhileNaked,
   ]);
 
   return (
     <div className="poiseCalculator">
       <CollapsablePanel title="Selection Settings" collapsedByDefault={false}>
         <div className="settings">
-          <p>
-            Target Poise (max.{' '}
-            {useBullGoats
-              ? applyBullGoatMultiplier(calculateMaxAchievablePoise(armorData))
-              : calculateMaxAchievablePoise(armorData)}
-            ):
-          </p>
-          <input
-            placeholder="Target poise"
-            type="number"
-            value={targetPoise}
+          <p>Method</p>
+          <select
             onChange={(e) => {
-              setTargetPoise(parseInt(e.target.value));
+              setMethod(e.target.value);
             }}
-          ></input>
-          <p>Use Bull-Goat's Talisman?:</p>
-          <Checkbox checked={useBullGoats} updateChecked={setUseBullGoats} />
+          >
+            <option value={COMBO_CALCULATION_METHOD.BY_TARGET_POISE}>
+              Target Poise
+            </option>
+            <option value={COMBO_CALCULATION_METHOD.BY_WEIGHT_LIMIT}>
+              Weight Limit
+            </option>
+          </select>
+          {method === COMBO_CALCULATION_METHOD.BY_TARGET_POISE ? (
+            <>
+              {' '}
+              <p>
+                Target Poise (max.{' '}
+                {useBullGoats
+                  ? applyBullGoatMultiplier(
+                      calculateMaxAchievablePoise(armorData)
+                    )
+                  : calculateMaxAchievablePoise(armorData)}
+                ):
+              </p>
+              <input
+                placeholder="Target poise"
+                type="number"
+                defaultValue={targetPoise}
+                onChange={(e) => {
+                  setTargetPoise(parseInt(e.target.value));
+                }}
+              ></input>
+              <p>Use Bull-Goat's Talisman?:</p>
+              <Checkbox
+                checked={useBullGoats}
+                updateChecked={setUseBullGoats}
+              />
+            </>
+          ) : null}
+          {method === COMBO_CALCULATION_METHOD.BY_WEIGHT_LIMIT ? (
+            <>
+              <p>Equip Load While Naked</p>
+              <input
+                placeholder="Equip load while naked"
+                defaultValue={equipLoadWhileNaked}
+                onChange={(e) => {
+                  setEquipLoadWhileNaked(parseFloat(e.target.value));
+                }}
+              ></input>
+              <p>Maximum Equip Load</p>
+              <input
+                placeholder="Max equip load"
+                defaultValue={maxEquipLoad}
+                onChange={(e) => {
+                  setMaxEquipLoad(parseFloat(e.target.value));
+                }}
+              ></input>
+            </>
+          ) : null}
           <p>Allow nothing for helm?:</p>
           <Checkbox
             checked={allowNothingForHead}
@@ -128,6 +188,11 @@ const PoiseCalculator = ({ armorData }) => {
         </div>
       </CollapsablePanel>
       <CollapsablePanel title="Sorting Settings" collapsedByDefault={true}>
+        <p className="unintrusive">
+          The main sorting method is{' '}
+          {COMBO_CALCULATION_METHOD_SORT_LABEL[method]}, these settings will be
+          applied to tie-breaks.
+        </p>
         <div className="settings">
           {Object.keys(importances).map((x) => (
             <Fragment key={x}>

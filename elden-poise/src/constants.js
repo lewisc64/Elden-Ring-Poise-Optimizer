@@ -1,5 +1,4 @@
 export const DATA_VERSION = '1.08.1';
-export const WORKER_PATH = 'comboWorker.js';
 
 export const SLOT_TITLES = {
   head: 'Helms',
@@ -71,7 +70,6 @@ export const ARMOR_ATTRIBUTE_NAME_MAP = {
 export const BULL_GOAT_TALISMAN_MULTIPLIER = 4 / 3;
 
 export const DEFAULT_IMPORTANCES = {
-  weight: 1000000,
   immunity: 1,
   robustness: 1,
   focus: 1,
@@ -84,4 +82,14 @@ export const DEFAULT_IMPORTANCES = {
   defenseFire: 10,
   defenseLightning: 10,
   defenseHoly: 10,
+};
+
+export const COMBO_CALCULATION_METHOD = {
+  BY_TARGET_POISE: 'byTargetPoise',
+  BY_WEIGHT_LIMIT: 'byWeightLimit',
+};
+
+export const COMBO_CALCULATION_METHOD_SORT_LABEL = {
+  byTargetPoise: 'by weight',
+  byWeightLimit: 'by poise',
 };
