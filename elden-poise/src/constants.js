@@ -70,6 +70,8 @@ export const ARMOR_ATTRIBUTE_NAME_MAP = {
 export const BULL_GOAT_TALISMAN_MULTIPLIER = 4 / 3;
 
 export const DEFAULT_IMPORTANCES = {
+  poise: 2000000,
+  weight: -1000000,
   immunity: 1,
   robustness: 1,
   focus: 1,
@@ -87,9 +89,4 @@ export const DEFAULT_IMPORTANCES = {
 export const COMBO_CALCULATION_METHOD = {
   BY_TARGET_POISE: 'byTargetPoise',
   BY_WEIGHT_LIMIT: 'byWeightLimit',
-};
-
-export const COMBO_CALCULATION_METHOD_SORT_LABEL = {
-  byTargetPoise: 'by weight',
-  byWeightLimit: 'by poise',
 };

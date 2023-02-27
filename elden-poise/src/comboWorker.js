@@ -1,126 +1,127 @@
 const COMBO_LIMIT = 20;
 
-function calculateScoreOfCombo(combo, importances) {
-  let totalDefense = 0;
-  let totalResistance = 0;
-  for (let slot of ['head', 'body', 'arms', 'legs']) {
-    totalDefense += combo[slot].defensePhysical * importances.defensePhysical;
-    totalDefense +=
-      combo[slot].defensePhysicalSlash * importances.defensePhysicalSlash;
-    totalDefense +=
-      combo[slot].defensePhysicalStrike * importances.defensePhysicalStrike;
-    totalDefense +=
-      combo[slot].defensePhysicalPierce * importances.defensePhysicalPierce;
-    totalDefense += combo[slot].defenseMagic * importances.defenseMagic;
-    totalDefense += combo[slot].defenseFire * importances.defenseFire;
-    totalDefense += combo[slot].defenseLightning * importances.defenseLightning;
-    totalDefense += combo[slot].defenseHoly * importances.defenseHoly;
+let armorScoreCache = {};
 
-    totalResistance += combo[slot].immunity * importances.immunity;
-    totalResistance += combo[slot].robustness * importances.robustness;
-    totalResistance += combo[slot].focus * importances.focus;
-    totalResistance += combo[slot].vitality * importances.vitality;
+function calculateScoreOfArmor(armor, importances) {
+  if (armorScoreCache[armor.name] !== undefined) {
+    return armorScoreCache[armor.name];
   }
-  return totalDefense + totalResistance;
+
+  let score = armor.weight * importances.weight;
+  score += armor.poise * importances.poise;
+
+  score += armor.defensePhysical * importances.defensePhysical;
+  score += armor.defensePhysicalSlash * importances.defensePhysicalSlash;
+  score += armor.defensePhysicalStrike * importances.defensePhysicalStrike;
+  score += armor.defensePhysicalPierce * importances.defensePhysicalPierce;
+  score += armor.defenseMagic * importances.defenseMagic;
+  score += armor.defenseFire * importances.defenseFire;
+  score += armor.defenseLightning * importances.defenseLightning;
+  score += armor.defenseHoly * importances.defenseHoly;
+
+  score += armor.immunity * importances.immunity;
+  score += armor.robustness * importances.robustness;
+  score += armor.focus * importances.focus;
+  score += armor.vitality * importances.vitality;
+
+  armorScoreCache[armor.name] = score;
+
+  return score;
+}
+
+function calculateScoreOfCombo(combo, importances) {
+  return (
+    calculateScoreOfArmor(combo.head, importances) +
+    calculateScoreOfArmor(combo.body, importances) +
+    calculateScoreOfArmor(combo.arms, importances) +
+    calculateScoreOfArmor(combo.legs, importances)
+  );
 }
 
 function getArmorOfSlot(armorData, slot) {
   return armorData.filter((x) => x.slot === slot);
 }
 
-function createCombosForTargetPoise(armorData, targetPoise) {
-  const combos = [];
+function* createCombos(
+  armorData,
+  scoreStrategy,
+  filterStrategy,
+  progressCallback
+) {
   const headArmor = getArmorOfSlot(armorData, 'head');
   const bodyArmor = getArmorOfSlot(armorData, 'body');
   const armsArmor = getArmorOfSlot(armorData, 'arms');
   const legsArmor = getArmorOfSlot(armorData, 'legs');
 
-  for (let head of headArmor) {
-    for (let body of bodyArmor) {
-      for (let arms of armsArmor) {
-        for (let legs of legsArmor) {
-          const totalPoise = head.poise + body.poise + arms.poise + legs.poise;
-          if (totalPoise === targetPoise) {
-            const totalWeight =
-              Math.round(
-                (head.weight + body.weight + arms.weight + legs.weight) * 10
-              ) / 10;
-            combos.push({
-              head: head,
-              body: body,
-              arms: arms,
-              legs: legs,
-              poise: totalPoise,
-              weight: totalWeight,
-            });
-          }
-        }
-      }
-    }
-  }
-  return combos;
-}
-
-function createCombosForWeightLoad(armorData, weightLimit, belowLimit = 0.5) {
-  const combos = [];
-  const headArmor = getArmorOfSlot(armorData, 'head');
-  const bodyArmor = getArmorOfSlot(armorData, 'body');
-  const armsArmor = getArmorOfSlot(armorData, 'arms');
-  const legsArmor = getArmorOfSlot(armorData, 'legs');
-
-  let highestPoiseObserved = 0;
+  const numberOfCombos =
+    headArmor.length * bodyArmor.length * armsArmor.length * legsArmor.length;
+  let combosProcessed = 0;
+  const progressCallInterval = Math.floor(numberOfCombos / 1000);
 
   for (let head of headArmor) {
     for (let body of bodyArmor) {
       for (let arms of armsArmor) {
         for (let legs of legsArmor) {
-          const totalPoise = head.poise + body.poise + arms.poise + legs.poise;
           const totalWeight =
             head.weight + body.weight + arms.weight + legs.weight;
-          if (totalPoise >= highestPoiseObserved && totalWeight < weightLimit) {
-            highestPoiseObserved = Math.max(highestPoiseObserved, totalPoise);
-            combos.push({
+          const totalPoise = head.poise + body.poise + arms.poise + legs.poise;
+          if (filterStrategy(totalWeight, totalPoise)) {
+            const combo = {
               head: head,
               body: body,
               arms: arms,
               legs: legs,
               poise: totalPoise,
               weight: Math.round(totalWeight * 10) / 10,
-            });
+            };
+            combo.score = scoreStrategy(combo);
+            yield combo;
+          }
+          if (++combosProcessed % progressCallInterval === 0) {
+            progressCallback(combosProcessed, numberOfCombos);
           }
         }
       }
     }
   }
-  return combos;
 }
 
 onmessage = (e) => {
-  let combos;
+  let filterStrategy;
   if (e.data.method === 'byTargetPoise') {
-    combos = createCombosForTargetPoise(
-      e.data.data.armorData,
-      e.data.data.targetPoise
-    );
-    combos
-      .sort(
-        (a, b) =>
-          calculateScoreOfCombo(b, e.data.data.importances) -
-          calculateScoreOfCombo(a, e.data.data.importances)
-      )
-      .sort((a, b) => a.weight - b.weight);
+    filterStrategy = (_, poise) => poise === e.data.data.targetPoise;
   } else if (e.data.method === 'byWeightLimit') {
-    combos = createCombosForWeightLoad(
-      e.data.data.armorData,
-      e.data.data.weightLimit
-    );
-    combos
-      .sort(
-        (a, b) =>
-          calculateScoreOfCombo(b, e.data.data.importances) -
-          calculateScoreOfCombo(a, e.data.data.importances)
-      )
-      .sort((a, b) => b.poise - a.poise);
+    filterStrategy = (weight, _) => weight < e.data.data.weightLimit;
   }
-  postMessage(combos.slice(0, COMBO_LIMIT));
+  const scoreStrategy = (combo) =>
+    calculateScoreOfCombo(combo, e.data.data.importances);
+
+  const progressCallback = (processed, total) => {
+    postMessage({ messageType: 'progress', data: { processed, total } });
+  };
+
+  let lowestScore = Infinity;
+  const combos = [];
+
+  for (let combo of createCombos(
+    e.data.data.armorData,
+    scoreStrategy,
+    filterStrategy,
+    progressCallback
+  )) {
+    if (combos.length < COMBO_LIMIT) {
+      combos.push(combo);
+      lowestScore = Math.min(lowestScore, combo.score);
+    } else if (combo.score > lowestScore) {
+      combos.push(combo);
+      combos.sort((a, b) => a.score - b.score);
+      combos.shift(1);
+      lowestScore = combos[0].score;
+    }
+  }
+
+  combos.sort((a, b) => b.score - a.score);
+  armorScoreCache = {};
+
+  postMessage({ messageType: 'result', data: combos });
 };

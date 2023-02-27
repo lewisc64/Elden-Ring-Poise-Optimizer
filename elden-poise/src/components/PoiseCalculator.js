@@ -5,7 +5,6 @@ import {
   ARMOR_ATTRIBUTE_NAME_MAP,
   DEFAULT_IMPORTANCES,
   COMBO_CALCULATION_METHOD,
-  COMBO_CALCULATION_METHOD_SORT_LABEL,
 } from '../constants';
 import {
   calculateTopCombos,
@@ -37,6 +36,7 @@ const PoiseCalculator = ({ armorData }) => {
   const [shouldCalculate, setShouldCalculate] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [progressPercentage, setProgressPercentage] = useState('0%');
 
   const setImportance = useCallback(
     (importanceName, value) => {
@@ -70,6 +70,13 @@ const PoiseCalculator = ({ armorData }) => {
         setTopCombos(combos);
         setIsProcessing(false);
         setShowResults(true);
+        setProgressPercentage('0%');
+      };
+
+      const progressCallback = ({ processed, total }) => {
+        setProgressPercentage(
+          `${Math.round(((processed * 100) / total) * 10) / 10}%`
+        );
       };
 
       calculateTopCombos(
@@ -83,7 +90,8 @@ const PoiseCalculator = ({ armorData }) => {
           weightLimit:
             Math.round((maxEquipLoad * 0.7 - equipLoadWhileNaked) * 10) / 10,
         },
-        callback
+        callback,
+        progressCallback
       );
     }
   }, [
@@ -188,11 +196,6 @@ const PoiseCalculator = ({ armorData }) => {
         </div>
       </CollapsablePanel>
       <CollapsablePanel title="Sorting Settings" collapsedByDefault={true}>
-        <p className="unintrusive">
-          The main sorting method is{' '}
-          {COMBO_CALCULATION_METHOD_SORT_LABEL[method]}, these settings will be
-          applied to tie-breaks.
-        </p>
         <div className="settings">
           {Object.keys(importances).map((x) => (
             <Fragment key={x}>
@@ -210,7 +213,9 @@ const PoiseCalculator = ({ armorData }) => {
         </div>
       </CollapsablePanel>
       {isProcessing ? (
-        <p className="doingSomething">Processing combinations...</p>
+        <p className="doingSomething">
+          Processing combinations... ({progressPercentage})
+        </p>
       ) : (
         <button
           onClick={() => {

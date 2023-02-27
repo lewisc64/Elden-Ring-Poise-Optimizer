@@ -4,11 +4,15 @@ export function applyBullGoatMultiplier(poise) {
   return Math.trunc(poise * BULL_GOAT_TALISMAN_MULTIPLIER);
 }
 
-export function calculateTopCombos(method, data, callback) {
+export function calculateTopCombos(method, data, callback, progressCallback) {
   const worker = new Worker(new URL('./comboWorker.js', import.meta.url));
   worker.onmessage = (e) => {
-    callback(e.data);
-    worker.terminate();
+    if (e.data.messageType === 'progress') {
+      progressCallback(e.data.data);
+    } else if (e.data.messageType === 'result') {
+      callback(e.data.data);
+      worker.terminate();
+    }
   };
   worker.postMessage({ method, data });
 }
