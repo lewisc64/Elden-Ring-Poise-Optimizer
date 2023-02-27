@@ -100,7 +100,7 @@ onmessage = (e) => {
     postMessage({ messageType: 'progress', data: { processed, total } });
   };
 
-  let lowestScore = Infinity;
+  let lowestScore = -Infinity;
   const combos = [];
 
   for (let combo of createCombos(
@@ -109,13 +109,16 @@ onmessage = (e) => {
     filterStrategy,
     progressCallback
   )) {
-    if (combos.length < COMBO_LIMIT) {
-      combos.push(combo);
-      lowestScore = Math.min(lowestScore, combo.score);
-    } else if (combo.score > lowestScore) {
-      combos.push(combo);
-      combos.sort((a, b) => a.score - b.score);
-      combos.shift(1);
+    if (combo.score > lowestScore) {
+      for (let i = 0; i < combos.length + 1; i++) {
+        if (combos[i] === undefined || combo.score < combos[i].score) {
+          combos.splice(i, 0, combo);
+          break;
+        }
+      }
+      if (combos.length > COMBO_LIMIT) {
+        combos.shift(1);
+      }
       lowestScore = combos[0].score;
     }
   }
