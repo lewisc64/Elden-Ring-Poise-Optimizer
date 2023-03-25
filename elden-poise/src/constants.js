@@ -1,4 +1,4 @@
-export const DATA_VERSION = '1.08.1';
+export const DATA_VERSION = '1.09';
 
 export const SLOT_TITLES = {
   head: 'Helms',
