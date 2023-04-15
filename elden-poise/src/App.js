@@ -16,6 +16,15 @@ const App = () => {
   return (
     <div>
       <p className="unintrusive">For version '{DATA_VERSION}'.</p>
+      <a
+        id="githubLink"
+        href="https://github.com/lewisc64/Elden-Ring-Poise-Optimizer"
+      >
+        <img
+          alt="GitHub logo"
+          src={`${process.env.PUBLIC_URL}/github-logo.png`}
+        ></img>
+      </a>
       <ArmorSelectionAggregator
         armorData={armorData}
         updateSelected={setSelectedArmor}

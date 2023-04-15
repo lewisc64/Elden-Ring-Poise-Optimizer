@@ -10,6 +10,12 @@ body {
   font-style: italic;
 }
 
+#githubLink {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+}
+
 input {
   border: none;
   background-color: #999;
