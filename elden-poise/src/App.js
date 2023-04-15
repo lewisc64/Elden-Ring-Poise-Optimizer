@@ -1,5 +1,11 @@
 import { useState } from 'react';
-import { UNOBTAINABLE_ARMOR_NAMES, DATA_VERSION } from './constants';
+import {
+  UNOBTAINABLE_ARMOR_NAMES,
+  DATA_VERSION,
+  DATA_SOURCE_LINK,
+  DATA_SOURCE_DESCRIPTION,
+  GITHUB_LINK,
+} from './constants';
 import baseArmorData from './data/armor_data.json';
 
 import { ArmorSelectionAggregator } from './components/ArmorSelector';
@@ -15,11 +21,11 @@ const App = () => {
 
   return (
     <div>
-      <p className="unintrusive">For version '{DATA_VERSION}'.</p>
-      <a
-        id="githubLink"
-        href="https://github.com/lewisc64/Elden-Ring-Poise-Optimizer"
-      >
+      <p className="unintrusive">
+        For version '{DATA_VERSION}'. Data source:{' '}
+        <a href={DATA_SOURCE_LINK}>{DATA_SOURCE_DESCRIPTION}</a>.
+      </p>
+      <a id="githubLink" href={GITHUB_LINK}>
         <img
           alt="GitHub logo"
           src={`${process.env.PUBLIC_URL}/github-logo.png`}
