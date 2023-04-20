@@ -138,6 +138,7 @@ onmessage = (e) => {
       return;
     }
     postMessage({ messageType: 'result', data: [] });
+    return;
   }
 
   let filterStrategy;
