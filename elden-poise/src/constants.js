@@ -94,7 +94,22 @@ export const DEFAULT_IMPORTANCES = {
   defenseHoly: 10,
 };
 
-export const COMBO_CALCULATION_METHOD = {
+export const COMBO_FILTER_METHOD = {
   BY_TARGET_POISE: 'byTargetPoise',
   BY_WEIGHT_LIMIT: 'byWeightLimit',
+  BY_NOTHING: 'byNothing',
+};
+
+export const ROLL_TYPE = {
+  LIGHT_ROLL: 'lightRoll',
+  MEDIUM_ROLL: 'mediumRoll',
+  HEAVY_ROLL: 'heavyRoll',
+  OVERENCUMBERED: 'overEncumbered',
+};
+
+export const ROLL_PERCENTAGES = {
+  [ROLL_TYPE.LIGHT_ROLL]: 0.3,
+  [ROLL_TYPE.MEDIUM_ROLL]: 0.7,
+  [ROLL_TYPE.HEAVY_ROLL]: 1.0,
+  [ROLL_TYPE.OVERENCUMBERED]: Infinity,
 };

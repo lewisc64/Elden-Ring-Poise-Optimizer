@@ -4,7 +4,9 @@ import {
   BULL_GOAT_TALISMAN_MULTIPLIER,
   ARMOR_ATTRIBUTE_NAME_MAP,
   DEFAULT_IMPORTANCES,
-  COMBO_CALCULATION_METHOD,
+  COMBO_FILTER_METHOD,
+  ROLL_TYPE,
+  ROLL_PERCENTAGES,
 } from '../constants';
 import {
   calculateTopCombos,
@@ -19,13 +21,14 @@ import ResultsDialog from './ResultsDialog';
 import './PoiseCalculator.css';
 
 const PoiseCalculator = ({ armorData }) => {
-  const [method, setMethod] = useState(
-    COMBO_CALCULATION_METHOD.BY_TARGET_POISE
+  const [comboFilterMethod, setComboFilterMethod] = useState(
+    COMBO_FILTER_METHOD.BY_TARGET_POISE
   );
   const [useBullGoats, setUseBullGoats] = useState(true);
   const [targetPoise, setTargetPoise] = useState(101);
   const [equipLoadWhileNaked, setEquipLoadWhileNaked] = useState(16.6);
   const [maxEquipLoad, setMaxEquipLoad] = useState(85.7);
+  const [desiredRollType, setDesiredRollType] = useState(ROLL_TYPE.MEDIUM_ROLL);
   const [allowNothingForHead, setAllowNothingForHead] = useState(true);
   const [allowNothingForBody, setAllowNothingForBody] = useState(true);
   const [allowNothingForArms, setAllowNothingForArms] = useState(true);
@@ -80,7 +83,7 @@ const PoiseCalculator = ({ armorData }) => {
       };
 
       calculateTopCombos(
-        method,
+        comboFilterMethod,
         {
           armorData: useData,
           targetPoise: Math.ceil(
@@ -88,7 +91,11 @@ const PoiseCalculator = ({ armorData }) => {
           ),
           importances: importances,
           weightLimit:
-            Math.round((maxEquipLoad * 0.7 - equipLoadWhileNaked) * 10) / 10,
+            Math.round(
+              (maxEquipLoad * ROLL_PERCENTAGES[desiredRollType] -
+                equipLoadWhileNaked) *
+                10
+            ) / 10,
         },
         callback,
         progressCallback
@@ -96,7 +103,7 @@ const PoiseCalculator = ({ armorData }) => {
     }
   }, [
     armorData,
-    method,
+    comboFilterMethod,
     targetPoise,
     useBullGoats,
     shouldCalculate,
@@ -107,26 +114,30 @@ const PoiseCalculator = ({ armorData }) => {
     importances,
     maxEquipLoad,
     equipLoadWhileNaked,
+    desiredRollType,
   ]);
 
   return (
     <div className="poiseCalculator">
       <CollapsablePanel title="Selection Settings" collapsedByDefault={false}>
         <div className="settings">
-          <p>Method</p>
+          <p>Filter Method</p>
           <select
             onChange={(e) => {
-              setMethod(e.target.value);
+              setComboFilterMethod(e.target.value);
             }}
           >
-            <option value={COMBO_CALCULATION_METHOD.BY_TARGET_POISE}>
+            <option value={COMBO_FILTER_METHOD.BY_TARGET_POISE}>
               Target Poise
             </option>
-            <option value={COMBO_CALCULATION_METHOD.BY_WEIGHT_LIMIT}>
+            <option value={COMBO_FILTER_METHOD.BY_WEIGHT_LIMIT}>
               Weight Limit
             </option>
+            <option value={COMBO_FILTER_METHOD.BY_NOTHING}>
+              None (single top-scoring result)
+            </option>
           </select>
-          {method === COMBO_CALCULATION_METHOD.BY_TARGET_POISE ? (
+          {comboFilterMethod === COMBO_FILTER_METHOD.BY_TARGET_POISE ? (
             <>
               {' '}
               <p>
@@ -136,7 +147,7 @@ const PoiseCalculator = ({ armorData }) => {
                       calculateMaxAchievablePoise(armorData)
                     )
                   : calculateMaxAchievablePoise(armorData)}
-                ):
+                )
               </p>
               <input
                 placeholder="Target poise"
@@ -146,14 +157,14 @@ const PoiseCalculator = ({ armorData }) => {
                   setTargetPoise(parseInt(e.target.value));
                 }}
               ></input>
-              <p>Use Bull-Goat's Talisman?:</p>
+              <p>Use Bull-Goat's Talisman?</p>
               <Checkbox
                 checked={useBullGoats}
                 updateChecked={setUseBullGoats}
               />
             </>
           ) : null}
-          {method === COMBO_CALCULATION_METHOD.BY_WEIGHT_LIMIT ? (
+          {comboFilterMethod === COMBO_FILTER_METHOD.BY_WEIGHT_LIMIT ? (
             <>
               <p>Equip Load While Naked</p>
               <input
@@ -171,24 +182,38 @@ const PoiseCalculator = ({ armorData }) => {
                   setMaxEquipLoad(parseFloat(e.target.value));
                 }}
               ></input>
+              <p>Desired Roll Type</p>
+              <select
+                onChange={(e) => {
+                  setDesiredRollType(e.target.value);
+                }}
+                defaultValue={desiredRollType}
+              >
+                <option value={ROLL_TYPE.LIGHT_ROLL}>Light roll</option>
+                <option value={ROLL_TYPE.MEDIUM_ROLL}>Medium roll</option>
+                <option value={ROLL_TYPE.HEAVY_ROLL}>Heavy roll</option>
+                <option value={ROLL_TYPE.OVERENCUMBERED}>
+                  Over-encumbered
+                </option>
+              </select>
             </>
           ) : null}
-          <p>Allow nothing for helm?:</p>
+          <p>Allow nothing for helm?</p>
           <Checkbox
             checked={allowNothingForHead}
             updateChecked={setAllowNothingForHead}
           />
-          <p>Allow nothing for chest?:</p>
+          <p>Allow nothing for chest?</p>
           <Checkbox
             checked={allowNothingForBody}
             updateChecked={setAllowNothingForBody}
           />
-          <p>Allow nothing for gauntlets?:</p>
+          <p>Allow nothing for gauntlets?</p>
           <Checkbox
             checked={allowNothingForArms}
             updateChecked={setAllowNothingForArms}
           />
-          <p>Allow nothing for greaves?:</p>
+          <p>Allow nothing for greaves?</p>
           <Checkbox
             checked={allowNothingForLegs}
             updateChecked={setAllowNothingForLegs}
@@ -199,11 +224,11 @@ const PoiseCalculator = ({ armorData }) => {
         <div className="settings">
           {Object.keys(importances).map((x) => (
             <Fragment key={x}>
-              <p>{ARMOR_ATTRIBUTE_NAME_MAP[x]} importance:</p>
+              <p>{ARMOR_ATTRIBUTE_NAME_MAP[x]} importance</p>
               <input
                 placeholder={`${ARMOR_ATTRIBUTE_NAME_MAP[x]} importance`}
                 type="number"
-                value={importances[x]}
+                defaultValue={importances[x]}
                 onChange={(e) => {
                   setImportance(x, e.target.value);
                 }}

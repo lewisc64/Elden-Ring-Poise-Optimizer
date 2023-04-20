@@ -3,6 +3,9 @@ const COMBO_LIMIT = 20;
 let armorScoreCache = {};
 
 function calculateScoreOfArmor(armor, importances) {
+  if (armor === undefined) {
+    return 0;
+  }
   if (armorScoreCache[armor.name] !== undefined) {
     return armorScoreCache[armor.name];
   }
@@ -86,15 +89,63 @@ function* createCombos(
   }
 }
 
+function getTopScoringArmorPiece(armorData, scoreStrategy) {
+  let top = null;
+  let topScore = -Infinity;
+  for (let armor of armorData) {
+    const score = scoreStrategy({ [armor.slot]: armor });
+    if (score > topScore) {
+      topScore = score;
+      top = armor;
+    }
+  }
+  return top;
+}
+
+function getTopScoringCombo(armorData, scoreStrategy) {
+  const combo = {};
+  for (let slot of ['head', 'body', 'arms', 'legs']) {
+    combo[slot] = getTopScoringArmorPiece(
+      getArmorOfSlot(armorData, slot),
+      scoreStrategy
+    );
+    if (combo[slot] === null) {
+      return null;
+    }
+  }
+  combo.poise =
+    combo.head.poise + combo.body.poise + combo.arms.poise + combo.legs.poise;
+  combo.weight =
+    Math.round(
+      (combo.head.weight +
+        combo.body.weight +
+        combo.arms.weight +
+        combo.legs.weight) *
+        10
+    ) / 10;
+  combo.score = scoreStrategy(combo);
+  return combo;
+}
+
 onmessage = (e) => {
+  const scoreStrategy = (combo) =>
+    calculateScoreOfCombo(combo, e.data.data.importances);
+
+  if (e.data.method === 'byNothing') {
+    const combo = getTopScoringCombo(e.data.data.armorData, scoreStrategy);
+    if (combo) {
+      postMessage({ messageType: 'result', data: [combo] });
+      return;
+    }
+    postMessage({ messageType: 'result', data: [] });
+  }
+
   let filterStrategy;
   if (e.data.method === 'byTargetPoise') {
     filterStrategy = (_, poise) => poise === e.data.data.targetPoise;
   } else if (e.data.method === 'byWeightLimit') {
     filterStrategy = (weight, _) => weight < e.data.data.weightLimit;
   }
-  const scoreStrategy = (combo) =>
-    calculateScoreOfCombo(combo, e.data.data.importances);
 
   const progressCallback = (processed, total) => {
     postMessage({ messageType: 'progress', data: { processed, total } });
