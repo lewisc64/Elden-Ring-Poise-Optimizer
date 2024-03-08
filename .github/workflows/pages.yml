@@ -24,19 +24,19 @@ jobs:
         uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 19
+          node-version: 21
       - name: Install Packages
-        working-directory: './elden-poise'
+        working-directory: './elden-ring-poise-optimizer'
         run: npm i
       - name: Build
-        working-directory: './elden-poise'
+        working-directory: './elden-ring-poise-optimizer'
         run: npm run build
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: './elden-poise/build'
+          path: './elden-ring-poise-optimizer/dist'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
