@@ -26,7 +26,7 @@ const App = () => {
         <a href={DATA_SOURCE_LINK}>{DATA_SOURCE_DESCRIPTION}</a>.
       </p>
       <a id="githubLink" href={GITHUB_LINK}>
-        <img alt="GitHub logo" src="/github-logo.png"></img>
+        <img alt="GitHub logo" src="./github-logo.png"></img>
       </a>
       <ArmorSelectionAggregator
         armorData={armorData}
