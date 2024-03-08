@@ -1,1 +1,0 @@
-[Source](https://github.com/EldenRingDatabase/erdb/blob/master/src/erdb/data/gamedata/1.08.1.zip)

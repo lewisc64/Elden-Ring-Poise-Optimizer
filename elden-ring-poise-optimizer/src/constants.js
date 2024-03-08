@@ -1,9 +1,8 @@
-export const DATA_VERSION = '1.09';
+export const DATA_VERSION = '1.10.1';
 
-export const DATA_SOURCE_LINK =
-  'https://docs.google.com/spreadsheets/d/1x6LvzrqA9LWXPbzPZBDG8aL4N3Xc_ZxtEFMWpUxQj5c/edit#gid=1685478111';
+export const DATA_SOURCE_LINK = 'https://github.com/EldenRingDatabase/erdb';
 
-export const DATA_SOURCE_DESCRIPTION = 'google sheet';
+export const DATA_SOURCE_DESCRIPTION = 'erdb';
 
 export const GITHUB_LINK =
   'https://github.com/lewisc64/Elden-Ring-Poise-Optimizer';
