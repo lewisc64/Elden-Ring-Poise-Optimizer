@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ARMOR_NOTHING } from '../constants';
 import { getWikiLink } from '../utilities';
 
 import './ArmorReadout.css';
@@ -45,9 +46,11 @@ const ArmorReadout = ({ armor, defaultExpanded }) => {
             <p>Focus: {armor.focus}</p>
             <p>Vitality: {armor.vitality}</p>
           </div>
-          <a className="wikiLink" href={getWikiLink(armor)}>
-            wiki
-          </a>
+          {armor.name !== ARMOR_NOTHING.name ? (
+            <a className="wikiLink" href={getWikiLink(armor)}>
+              wiki
+            </a>
+          ) : null}
         </div>
       ) : null}
     </article>
