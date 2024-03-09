@@ -8,7 +8,7 @@ const Checkbox = ({ checked, updateChecked }) => {
         updateChecked(!checked);
       }}
     >
-      {checked ? 'YES' : 'NO'}
+      {checked ? '✓' : 'X'}
     </div>
   );
 };

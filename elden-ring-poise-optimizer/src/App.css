@@ -1,3 +1,9 @@
+:root {
+  --control-background-color: #888;
+  --positive-control-background-color: #66a;
+  --negative-control-background-color: #a66;
+}
+
 body {
   font-family: sans-serif;
   background-color: #222;
@@ -16,17 +22,20 @@ body {
   right: 1rem;
 }
 
-input {
+input,
+select {
   border: none;
-  background-color: #999;
+  background-color: var(--control-background-color);
   font-size: 1rem;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
+  padding: 0.2rem;
 }
 
 button {
   border: none;
-  background-color: #666;
+  transition: transform 0.1s;
+  background-color: var(--control-background-color);
   font-size: 1rem;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;

@@ -6,13 +6,16 @@ const ResultsDialog = ({ combos, show, setShow }) => {
   if (show) {
     return (
       <div className="results">
-        <button
-          onClick={() => {
-            setShow(false);
-          }}
-        >
-          Close
-        </button>
+        <header>
+          <h1>Results</h1>
+          <button
+            onClick={() => {
+              setShow(false);
+            }}
+          >
+            Close
+          </button>
+        </header>
         {combos.length >= 1 ? (
           <ol>
             {combos.map((x) => (

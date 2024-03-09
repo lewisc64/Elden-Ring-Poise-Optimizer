@@ -1,10 +1,10 @@
 .armorReadout {
   display: inline-block;
-  background-color: #999;
+  background-color: #aaa;
   color: #222;
   font-size: 0.8rem;
   width: 20rem;
-  border: 2px solid #777;
+  /* border: 2px solid #999; */
 }
 
 .armorReadoutTitle > h1 {
@@ -38,6 +38,8 @@
     'b c d';
   grid-column-gap: 0.2rem;
   grid-row-gap: 0.2rem;
+  background-color: #999;
+  padding: 0.5rem;
 }
 
 .armorReadoutContent > .weight > p,
@@ -49,7 +51,6 @@
 
 .armorReadoutContent > div {
   display: inline-block;
-  background-color: #777;
 }
 
 .armorReadoutContent > div > h2 {

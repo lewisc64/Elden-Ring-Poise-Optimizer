@@ -1,18 +1,37 @@
 .results {
   position: fixed;
-  top: 4rem;
-  left: 4rem;
-  width: calc(100vw - 8rem);
-  height: calc(100vh - 8rem);
+  top: 6rem;
+  left: 6rem;
+  width: 30rem;
+  height: calc(100vh - 12rem);
   overflow-y: scroll;
-  background-color: #333;
-  padding: 0.5rem;
+  background-color: #222;
+  filter: drop-shadow(0px 0px 20px black);
 }
 
-.results > button {
-  top: 0.5rem;
-  right: 0.5rem;
-  margin: 1rem;
+.results > header {
+  top: 0;
+  position: sticky;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+  background-color: rgba(16, 16, 16, 0.5);
+  padding: 1rem;
+}
+
+.results > header > h1 {
+  margin: 0;
+}
+
+.results > header > button {
+  background-color: var(--negative-control-background-color);
+  color: #eee;
+  margin: 0;
+}
+
+.results > ol > li {
+  margin-bottom: 1rem;
 }
 
 .results > ol > li::marker {

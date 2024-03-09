@@ -7,13 +7,14 @@
   padding: 0;
   height: 25rem;
   overflow-y: scroll;
+  background-color: #333;
+  padding: 0.5rem;
 }
 
 .armorSelector > ol > li {
   display: flex;
   align-items: center;
   list-style: none;
-  margin: 0;
 }
 
 .armorSelectionAggregator {
