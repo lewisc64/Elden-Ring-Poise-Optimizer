@@ -7,6 +7,8 @@ export const DATA_SOURCE_DESCRIPTION = 'erdb';
 export const GITHUB_LINK =
   'https://github.com/lewisc64/Elden-Ring-Poise-Optimizer';
 
+export const WIKI_URL = `https://eldenring.wiki.fextralife.com/`;
+
 export const SLOT_TITLES = {
   head: 'Helms',
   body: 'Chest Armor',

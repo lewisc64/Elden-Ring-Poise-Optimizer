@@ -33,6 +33,7 @@
 .armorReadoutContent {
   margin: 0.5rem;
   display: grid;
+  position: relative;
   grid-template:
     'a c d'
     'b c d';
@@ -59,4 +60,10 @@
 
 .armorReadoutContent > div > * {
   margin: 0;
+}
+
+.armorReadoutContent > .wikiLink {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.5rem;
 }

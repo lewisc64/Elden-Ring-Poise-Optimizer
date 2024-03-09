@@ -1,4 +1,4 @@
-import { BULL_GOAT_TALISMAN_MULTIPLIER } from './constants';
+import { BULL_GOAT_TALISMAN_MULTIPLIER, WIKI_URL } from './constants';
 
 export function applyBullGoatMultiplier(poise) {
   return Math.trunc(poise * BULL_GOAT_TALISMAN_MULTIPLIER);
@@ -26,4 +26,8 @@ export function calculateMaxAchievablePoise(armorData) {
     }
   }
   return poise;
+}
+
+export function getWikiLink(armor) {
+  return `${WIKI_URL}${armor.name.replaceAll(' ', '+')}`;
 }

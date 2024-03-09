@@ -8,7 +8,12 @@
   display: grid;
   grid-template-columns: auto 1fr;
   grid-column-gap: 0.5rem;
+  align-items: center;
   grid-row-gap: 0.5rem;
+}
+
+.comboReadout > .combos > p {
+  margin: 0;
 }
 
 .comboReadout > .details {
