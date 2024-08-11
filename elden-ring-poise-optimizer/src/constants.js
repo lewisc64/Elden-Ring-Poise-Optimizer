@@ -1,8 +1,9 @@
-export const DATA_VERSION = '1.10.1';
+export const DATA_VERSION = '1.13.1';
 
-export const DATA_SOURCE_LINK = 'https://github.com/EldenRingDatabase/erdb';
+export const DATA_SOURCE_LINK =
+  'https://er-frame-data.nyasu.business/params?pt=EquipParamProtector';
 
-export const DATA_SOURCE_DESCRIPTION = 'erdb';
+export const DATA_SOURCE_DESCRIPTION = 'er-frame-data';
 
 export const GITHUB_LINK =
   'https://github.com/lewisc64/Elden-Ring-Poise-Optimizer';
