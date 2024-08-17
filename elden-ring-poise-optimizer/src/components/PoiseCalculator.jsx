@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, Fragment } from 'react';
+import { css } from '@emotion/react';
 import {
   ARMOR_NOTHING,
   BULL_GOAT_TALISMAN_MULTIPLIER,
@@ -17,8 +18,22 @@ import {
 import CollapsablePanel from './CollapsablePanel';
 import Checkbox from './Checkbox';
 import ResultsDialog from './ResultsDialog';
+import PulsingText from './PulsingText';
+import Select from './Select';
+import TextBox from './TextBox';
+import Button from './Button';
 
-import './PoiseCalculator.css';
+const settingsSectionCss = css`
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-row-gap: 0.2rem;
+  align-items: center;
+  background-color: #222;
+  padding: 1rem;
+  > p {
+    margin: 0;
+  }
+`;
 
 const PoiseCalculator = ({ armorData }) => {
   const [comboFilterMethod, setComboFilterMethod] = useState(
@@ -118,11 +133,15 @@ const PoiseCalculator = ({ armorData }) => {
   ]);
 
   return (
-    <div className="poiseCalculator">
+    <div
+      css={css`
+        max-width: 30rem;
+      `}
+    >
       <CollapsablePanel title="Selection Settings" collapsedByDefault={false}>
-        <div className="settings">
+        <div css={settingsSectionCss}>
           <p>Filter Method</p>
-          <select
+          <Select
             onChange={(e) => {
               setComboFilterMethod(e.target.value);
             }}
@@ -136,10 +155,9 @@ const PoiseCalculator = ({ armorData }) => {
             <option value={COMBO_FILTER_METHOD.BY_NOTHING}>
               None (single top-scoring result)
             </option>
-          </select>
+          </Select>
           {comboFilterMethod === COMBO_FILTER_METHOD.BY_TARGET_POISE ? (
             <>
-              {' '}
               <p>
                 Target Poise (max.{' '}
                 {useBullGoats
@@ -149,14 +167,14 @@ const PoiseCalculator = ({ armorData }) => {
                   : calculateMaxAchievablePoise(armorData)}
                 )
               </p>
-              <input
+              <TextBox
                 placeholder="Target poise"
                 type="number"
                 defaultValue={targetPoise}
                 onChange={(e) => {
                   setTargetPoise(parseInt(e.target.value));
                 }}
-              ></input>
+              />
               <p>Use Bull-Goat's Talisman?</p>
               <Checkbox
                 checked={useBullGoats}
@@ -167,23 +185,23 @@ const PoiseCalculator = ({ armorData }) => {
           {comboFilterMethod === COMBO_FILTER_METHOD.BY_WEIGHT_LIMIT ? (
             <>
               <p>Equip Load While Naked</p>
-              <input
+              <TextBox
                 placeholder="Equip load while naked"
                 defaultValue={equipLoadWhileNaked}
                 onChange={(e) => {
                   setEquipLoadWhileNaked(parseFloat(e.target.value));
                 }}
-              ></input>
+              />
               <p>Maximum Equip Load</p>
-              <input
+              <TextBox
                 placeholder="Max equip load"
                 defaultValue={maxEquipLoad}
                 onChange={(e) => {
                   setMaxEquipLoad(parseFloat(e.target.value));
                 }}
-              ></input>
+              />
               <p>Desired Roll Type</p>
-              <select
+              <Select
                 onChange={(e) => {
                   setDesiredRollType(e.target.value);
                 }}
@@ -195,7 +213,7 @@ const PoiseCalculator = ({ armorData }) => {
                 <option value={ROLL_TYPE.OVERENCUMBERED}>
                   Over-encumbered
                 </option>
-              </select>
+              </Select>
             </>
           ) : null}
           <p>Allow nothing for helm?</p>
@@ -221,34 +239,36 @@ const PoiseCalculator = ({ armorData }) => {
         </div>
       </CollapsablePanel>
       <CollapsablePanel title="Sorting Settings" collapsedByDefault={true}>
-        <div className="settings">
+        <div css={settingsSectionCss}>
           {Object.keys(importances).map((x) => (
             <Fragment key={x}>
               <p>{ARMOR_ATTRIBUTE_NAME_MAP[x]} importance</p>
-              <input
+              <TextBox
                 placeholder={`${ARMOR_ATTRIBUTE_NAME_MAP[x]} importance`}
                 type="number"
                 defaultValue={importances[x]}
                 onChange={(e) => {
                   setImportance(x, e.target.value);
                 }}
-              ></input>
+              />
             </Fragment>
           ))}
         </div>
       </CollapsablePanel>
       {isProcessing ? (
-        <p className="doingSomething">
-          Processing combinations... ({progressPercentage})
+        <p>
+          <PulsingText>
+            Processing combinations... ({progressPercentage})
+          </PulsingText>
         </p>
       ) : (
-        <button
+        <Button
           onClick={() => {
             setShouldCalculate(true);
           }}
         >
           Calculate!
-        </button>
+        </Button>
       )}
       <ResultsDialog
         armorData={armorData}

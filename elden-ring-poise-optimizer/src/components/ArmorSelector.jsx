@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { css } from '@emotion/react';
 import { SLOT_TITLES } from '../constants';
 
 import Checkbox from './Checkbox';
 import ArmorReadout from './ArmorReadout';
-
-import './ArmorSelector.css';
+import Button from './Button';
+import TextBox from './TextBox';
+import UnintrusiveText from './UnintrusiveText';
 
 export const ArmorSelector = ({ title, armorData, updateSelected }) => {
   const [selected, setSelected] = useState([...armorData]);
@@ -23,39 +25,69 @@ export const ArmorSelector = ({ title, armorData, updateSelected }) => {
   };
 
   return (
-    <div className="armorSelector">
-      <h1>{title}</h1>
-      <input
-        className="armorSearch"
+    <div>
+      <h1
+        css={css`
+          margin: 0;
+        `}
+      >
+        {title}
+      </h1>
+      <TextBox
+        css={css`
+          width: 100%;
+        `}
         placeholder="Filter"
         onChange={(e) => {
           setSearchFilter(e.target.value);
         }}
-      ></input>
-      <div className="buttons">
-        <button
+      />
+      <div
+        css={css`
+          display: flex;
+          justify-content: flex-start;
+          column-gap: 0.5rem;
+        `}
+      >
+        <Button
           onClick={() => {
             setSelected([...armorData]);
           }}
         >
           Select All
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => {
             setSelected([]);
           }}
         >
           Select None
-        </button>
+        </Button>
       </div>
-      <ol>
+      <ol
+        css={css`
+          margin: 0;
+          padding: 0;
+          height: 25rem;
+          overflow-y: scroll;
+          background-color: #333;
+          padding: 0.5rem;
+        `}
+      >
         {armorData
           .filter((x) =>
             x.name.toLowerCase().includes(searchFilter.toLowerCase())
           )
           .sort((a, b) => (a.name > b.name ? 1 : -1))
           .map((x) => (
-            <li key={x.name}>
+            <li
+              css={css`
+                display: flex;
+                align-items: center;
+                list-style: none;
+              `}
+              key={x.name}
+            >
               <Checkbox
                 checked={selected.includes(x)}
                 updateChecked={() => {
@@ -66,9 +98,14 @@ export const ArmorSelector = ({ title, armorData, updateSelected }) => {
             </li>
           ))}
       </ol>
-      <p className="unintrusive">{`${selected.length} item${
-        selected.length === 1 ? '' : 's'
-      } selected.`}</p>
+      <UnintrusiveText
+        css={css`
+          display: block;
+          margin-top: 0.5rem;
+        `}
+      >
+        {`${selected.length} item${selected.length === 1 ? '' : 's'} selected.`}
+      </UnintrusiveText>
     </div>
   );
 };
@@ -109,7 +146,13 @@ export const ArmorSelectionAggregator = ({ armorData, updateSelected }) => {
   };
 
   return (
-    <div className="armorSelectionAggregator">
+    <div
+      css={css`
+        display: inline-flex;
+        flex-wrap: wrap;
+        grid-column-gap: 1rem;
+      `}
+    >
       {['head', 'body', 'arms', 'legs'].map((slot) => (
         <ArmorSelector
           key={slot}

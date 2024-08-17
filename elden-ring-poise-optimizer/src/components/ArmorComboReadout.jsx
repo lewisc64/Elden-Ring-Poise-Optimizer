@@ -1,12 +1,28 @@
+import { css } from '@emotion/react';
 import { applyBullGoatMultiplier } from '../utilities';
 import ArmorReadout from './ArmorReadout';
 
-import './ArmorComboReadout.css';
-
 const ArmorComboReadout = ({ combo }) => {
   return (
-    <article className="comboReadout">
-      <div className="combos">
+    <article
+      css={css`
+        display: inline-block;
+        background-color: #444;
+        padding: 0.5rem;
+      `}
+    >
+      <div
+        css={css`
+          display: grid;
+          grid-template-columns: auto 1fr;
+          grid-column-gap: 0.5rem;
+          align-items: center;
+          grid-row-gap: 0.5rem;
+          > p {
+            margin: 0;
+          }
+        `}
+      >
         <p>Head: </p>
         <ArmorReadout armor={combo.head} />
         <p>Body: </p>
@@ -16,19 +32,36 @@ const ArmorComboReadout = ({ combo }) => {
         <p>Legs: </p>
         <ArmorReadout armor={combo.legs} />
       </div>
-      <div className="details">
-        <div>
-          <p>Weight</p>
-          <p>{combo.weight}</p>
-        </div>
-        <div>
-          <p>Poise</p>
-          <p>{combo.poise}</p>
-        </div>
-        <div>
-          <p>Poise (Bull-Goat's)</p>
-          <p>{applyBullGoatMultiplier(combo.poise)}</p>
-        </div>
+      <div
+        css={css`
+          display: grid;
+          grid-template-columns: 1fr 1fr 2fr;
+          grid-row-gap: 0.5rem;
+          background-color: #aaa;
+          color: #222;
+          margin-top: 0.5rem;
+          padding: 0.5rem;
+          > p {
+            text-align: center;
+            margin: 0;
+          }
+        `}
+      >
+        <p>Weight</p>
+        <p>Poise</p>
+        <p>Poise (Bull-Goat's)</p>
+        {[combo.weight, combo.poise, applyBullGoatMultiplier(combo.poise)].map(
+          (x) => (
+            <p
+              css={css`
+                font-size: 1.2rem;
+                font-weight: 700;
+              `}
+            >
+              {x}
+            </p>
+          )
+        )}
       </div>
     </article>
   );

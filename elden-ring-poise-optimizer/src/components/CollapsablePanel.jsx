@@ -1,20 +1,37 @@
 import { useState } from 'react';
+import { css } from '@emotion/react';
 
-import './CollapsablePanel.css';
-
-const CollapsablePanel = ({ title, collapsedByDefault, children }) => {
+const CollapsablePanel = ({
+  title,
+  collapsedByDefault,
+  className,
+  children,
+}) => {
   const [isCollapsed, setIsCollapsed] = useState(collapsedByDefault);
 
   return (
-    <div className="collapsablePanel">
+    <div>
       <p
+        css={css`
+          user-select: none;
+          cursor: pointer;
+          background-color: #444;
+          padding: 0.5rem;
+        `}
         onClick={() => {
           setIsCollapsed(!isCollapsed);
         }}
       >
-        <span className="monospaced">{isCollapsed ? '+' : '-'}</span> {title}
+        <span
+          css={css`
+            font-family: monospace;
+          `}
+        >
+          {isCollapsed ? '+' : '-'}
+        </span>{' '}
+        {title}
       </p>
-      {isCollapsed ? null : children}
+      <div className={className}>{isCollapsed ? null : children}</div>
     </div>
   );
 };
