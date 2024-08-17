@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-const Select = ({ onChange, className, children }) => {
+const Select = ({ onChange, defaultValue, className, children }) => {
   return (
     <select
       css={css`
@@ -12,6 +12,7 @@ const Select = ({ onChange, className, children }) => {
         padding: 0.2rem;
       `}
       className={className}
+      defaultValue={defaultValue}
       onChange={onChange}
     >
       {children}
