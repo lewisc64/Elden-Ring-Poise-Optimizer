@@ -40,9 +40,9 @@ const PoiseCalculator = ({ armorData }) => {
     COMBO_FILTER_METHOD.BY_TARGET_POISE
   );
   const [useBullGoats, setUseBullGoats] = useState(true);
-  const [targetPoise, setTargetPoise] = useState(101);
-  const [equipLoadWhileNaked, setEquipLoadWhileNaked] = useState(16.6);
-  const [maxEquipLoad, setMaxEquipLoad] = useState(85.7);
+  const [targetPoise, setTargetPoise] = useState(105);
+  const [equipLoadWhileNaked, setEquipLoadWhileNaked] = useState(16.4);
+  const [maxEquipLoad, setMaxEquipLoad] = useState(72);
   const [desiredRollType, setDesiredRollType] = useState(ROLL_TYPE.MEDIUM_ROLL);
   const [allowNothingForHead, setAllowNothingForHead] = useState(true);
   const [allowNothingForBody, setAllowNothingForBody] = useState(true);
