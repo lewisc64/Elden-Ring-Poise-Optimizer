@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
-import { SLOT_TITLES } from '../constants';
+import { ARMOR_NAME_ALIASES, SLOT_TITLES } from '../constants';
 
 import Checkbox from './Checkbox';
 import ArmorReadout from './ArmorReadout';
@@ -75,8 +75,12 @@ export const ArmorSelector = ({ title, armorData, updateSelected }) => {
         `}
       >
         {armorData
-          .filter((x) =>
-            x.name.toLowerCase().includes(searchFilter.toLowerCase())
+          .filter(
+            (x) =>
+              x.name.toLowerCase().includes(searchFilter.toLowerCase()) ||
+              ARMOR_NAME_ALIASES[x.name]?.some((y) =>
+                y.toLowerCase().includes(searchFilter.toLowerCase())
+              )
           )
           .sort((a, b) => (a.name > b.name ? 1 : -1))
           .map((x) => (

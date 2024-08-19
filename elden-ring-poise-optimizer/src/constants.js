@@ -39,6 +39,11 @@ export const UNOBTAINABLE_ARMOR_NAMES = [
   'Grass Hair Ornament',
 ];
 
+export const ARMOR_NAME_ALIASES = {
+  "Queen's Crescent Crown": ['Banana'],
+  'Albinauric Mask': ['Frog mask', 'Lilbro'],
+};
+
 export const ARMOR_NOTHING = {
   name: 'Nothing',
   slot: 'DEFINE',
