@@ -1,4 +1,4 @@
-export const DATA_VERSION = '1.13.1';
+export const DATA_VERSION = '1.13.2';
 
 export const DATA_SOURCE_LINK =
   'https://er-frame-data.nyasu.business/params?pt=EquipParamProtector';
@@ -40,8 +40,8 @@ export const UNOBTAINABLE_ARMOR_NAMES = [
 ];
 
 export const ARMOR_NAME_ALIASES = {
-  "Queen's Crescent Crown": ['Banana'],
-  'Albinauric Mask': ['Frog mask', 'Lilbro'],
+  "Queen's Crescent Crown": ['Banana hat'],
+  'Albinauric Mask': ['Frog mask'],
 };
 
 export const ARMOR_NOTHING = {

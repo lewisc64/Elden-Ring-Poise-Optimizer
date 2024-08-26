@@ -107,7 +107,9 @@ const PoiseCalculator = ({ armorData }) => {
             targetPoise / (useBullGoats ? BULL_GOAT_TALISMAN_MULTIPLIER : 1)
           ),
           importances:
-            comboFilterMethod == COMBO_FILTER_METHOD.BY_WEIGHT_LIMIT
+            comboFilterMethod === COMBO_FILTER_METHOD.BY_TARGET_POISE
+              ? { ...importances, poise: 0 }
+              : comboFilterMethod === COMBO_FILTER_METHOD.BY_WEIGHT_LIMIT
               ? { ...importances, weight: 0 }
               : importances,
           weightLimit:
@@ -137,11 +139,6 @@ const PoiseCalculator = ({ armorData }) => {
     desiredRollType,
   ]);
 
-  const relevantImportancesNames =
-    comboFilterMethod == COMBO_FILTER_METHOD.BY_WEIGHT_LIMIT
-      ? Object.keys(importances).filter((x) => x != 'weight')
-      : Object.keys(importances);
-
   return (
     <div
       css={css`
@@ -160,7 +157,7 @@ const PoiseCalculator = ({ armorData }) => {
               Target Poise
             </option>
             <option value={COMBO_FILTER_METHOD.BY_WEIGHT_LIMIT}>
-              Weight Limit
+              Equip Load
             </option>
             <option value={COMBO_FILTER_METHOD.BY_NOTHING}>
               None (single top-scoring result)
@@ -257,12 +254,35 @@ const PoiseCalculator = ({ armorData }) => {
             score.
           </UnintrusiveText>
         </p>
+        {comboFilterMethod === COMBO_FILTER_METHOD.BY_TARGET_POISE ? (
+          <p>
+            <UnintrusiveText
+              css={css`
+                color: #ff0;
+              `}
+            >
+              Poise multiplier is irrelevant when filtering by target poise.
+            </UnintrusiveText>
+          </p>
+        ) : null}
+        {comboFilterMethod === COMBO_FILTER_METHOD.BY_WEIGHT_LIMIT ? (
+          <p>
+            <UnintrusiveText
+              css={css`
+                color: #ff0;
+              `}
+            >
+              Weight multiplier is always zero when filtering by equip load,
+              regardless of the setting below.
+            </UnintrusiveText>
+          </p>
+        ) : null}
         <div css={settingsSectionCss}>
-          {relevantImportancesNames.map((x) => (
+          {Object.keys(importances).map((x) => (
             <Fragment key={x}>
-              <p>{ARMOR_ATTRIBUTE_NAME_MAP[x]} importance</p>
+              <p>{ARMOR_ATTRIBUTE_NAME_MAP[x]} multiplier</p>
               <TextBox
-                placeholder={`${ARMOR_ATTRIBUTE_NAME_MAP[x]} importance`}
+                placeholder={`${ARMOR_ATTRIBUTE_NAME_MAP[x]} multiplier`}
                 type="number"
                 defaultValue={importances[x]}
                 onChange={(e) => {
