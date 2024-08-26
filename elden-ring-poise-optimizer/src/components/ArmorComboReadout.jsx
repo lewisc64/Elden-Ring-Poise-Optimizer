@@ -51,8 +51,9 @@ const ArmorComboReadout = ({ combo }) => {
         <p>Poise</p>
         <p>Poise (Bull-Goat's)</p>
         {[combo.weight, combo.poise, applyBullGoatMultiplier(combo.poise)].map(
-          (x) => (
+          (x, i) => (
             <p
+              key={i}
               css={css`
                 font-size: 1.2rem;
                 font-weight: 700;
