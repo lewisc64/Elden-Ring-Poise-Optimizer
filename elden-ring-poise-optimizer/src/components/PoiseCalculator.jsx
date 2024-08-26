@@ -18,10 +18,11 @@ import {
 import CollapsablePanel from './CollapsablePanel';
 import Checkbox from './Checkbox';
 import ResultsDialog from './ResultsDialog';
-import PulsingText from './PulsingText';
 import Select from './Select';
 import TextBox from './TextBox';
 import Button from './Button';
+import CombinationsProgress from './CombinationsProgress';
+import UnintrusiveText from './UnintrusiveText';
 
 const settingsSectionCss = css`
   display: grid;
@@ -54,7 +55,8 @@ const PoiseCalculator = ({ armorData }) => {
   const [shouldCalculate, setShouldCalculate] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [progressPercentage, setProgressPercentage] = useState('0%');
+  const [combosProcessed, setCombosProcessed] = useState(0);
+  const [totalCombinations, setTotalCombinations] = useState(0);
 
   const setImportance = useCallback(
     (importanceName, value) => {
@@ -88,13 +90,13 @@ const PoiseCalculator = ({ armorData }) => {
         setTopCombos(combos);
         setIsProcessing(false);
         setShowResults(true);
-        setProgressPercentage('0%');
+        setCombosProcessed(0);
+        setTotalCombinations(0);
       };
 
       const progressCallback = ({ processed, total }) => {
-        setProgressPercentage(
-          `${Math.round(((processed * 100) / total) * 10) / 10}%`
-        );
+        setCombosProcessed(processed);
+        setTotalCombinations(total);
       };
 
       calculateTopCombos(
@@ -247,6 +249,14 @@ const PoiseCalculator = ({ armorData }) => {
         </div>
       </CollapsablePanel>
       <CollapsablePanel title="Sorting Settings" collapsedByDefault={true}>
+        <p>
+          <UnintrusiveText>
+            Armor combinations are sorted by score. Armor is scored by
+            multiplying each attribute by the relevant setting below and taking
+            the sum. A combination's score is the sum of each armor piece's
+            score.
+          </UnintrusiveText>
+        </p>
         <div css={settingsSectionCss}>
           {relevantImportancesNames.map((x) => (
             <Fragment key={x}>
@@ -264,11 +274,10 @@ const PoiseCalculator = ({ armorData }) => {
         </div>
       </CollapsablePanel>
       {isProcessing ? (
-        <p>
-          <PulsingText>
-            Processing combinations... ({progressPercentage})
-          </PulsingText>
-        </p>
+        <CombinationsProgress
+          processed={combosProcessed}
+          total={totalCombinations}
+        />
       ) : (
         <Button
           onClick={() => {
