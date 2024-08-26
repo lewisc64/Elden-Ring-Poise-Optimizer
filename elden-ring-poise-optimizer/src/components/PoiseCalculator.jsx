@@ -104,7 +104,10 @@ const PoiseCalculator = ({ armorData }) => {
           targetPoise: Math.ceil(
             targetPoise / (useBullGoats ? BULL_GOAT_TALISMAN_MULTIPLIER : 1)
           ),
-          importances: importances,
+          importances:
+            comboFilterMethod == COMBO_FILTER_METHOD.BY_WEIGHT_LIMIT
+              ? { ...importances, weight: 0 }
+              : importances,
           weightLimit:
             Math.round(
               (maxEquipLoad * ROLL_PERCENTAGES[desiredRollType] -
@@ -131,6 +134,11 @@ const PoiseCalculator = ({ armorData }) => {
     equipLoadWhileNaked,
     desiredRollType,
   ]);
+
+  const relevantImportancesNames =
+    comboFilterMethod == COMBO_FILTER_METHOD.BY_WEIGHT_LIMIT
+      ? Object.keys(importances).filter((x) => x != 'weight')
+      : Object.keys(importances);
 
   return (
     <div
@@ -240,7 +248,7 @@ const PoiseCalculator = ({ armorData }) => {
       </CollapsablePanel>
       <CollapsablePanel title="Sorting Settings" collapsedByDefault={true}>
         <div css={settingsSectionCss}>
-          {Object.keys(importances).map((x) => (
+          {relevantImportancesNames.map((x) => (
             <Fragment key={x}>
               <p>{ARMOR_ATTRIBUTE_NAME_MAP[x]} importance</p>
               <TextBox
