@@ -173,7 +173,7 @@ const PoiseCalculator = ({ armorData, className }) => {
                 {useBullGoats
                   ? applyBullGoatMultiplier(
                       calculateMaxAchievablePoise(armorData)
-                    )
+                    ).toFixed(2)
                   : calculateMaxAchievablePoise(armorData)}
                 )
               </p>
@@ -182,7 +182,7 @@ const PoiseCalculator = ({ armorData, className }) => {
                 type="number"
                 defaultValue={targetPoise}
                 onChange={(e) => {
-                  setTargetPoise(parseInt(e.target.value));
+                  setTargetPoise(parseFloat(e.target.value));
                 }}
               />
               <p>Use Bull-Goat's Talisman?</p>

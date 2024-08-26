@@ -50,19 +50,21 @@ const ArmorComboReadout = ({ combo }) => {
         <p>Weight</p>
         <p>Poise</p>
         <p>Poise (Bull-Goat's)</p>
-        {[combo.weight, combo.poise, applyBullGoatMultiplier(combo.poise)].map(
-          (x, i) => (
-            <p
-              key={i}
-              css={css`
-                font-size: 1.2rem;
-                font-weight: 700;
-              `}
-            >
-              {x}
-            </p>
-          )
-        )}
+        {[
+          combo.weight,
+          combo.poise,
+          Math.round(applyBullGoatMultiplier(combo.poise) * 100) / 100,
+        ].map((x, i) => (
+          <p
+            key={i}
+            css={css`
+              font-size: 1.2rem;
+              font-weight: 700;
+            `}
+          >
+            {x}
+          </p>
+        ))}
       </div>
     </article>
   );
