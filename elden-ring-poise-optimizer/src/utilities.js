@@ -1,11 +1,12 @@
 import { BULL_GOAT_TALISMAN_MULTIPLIER, WIKI_URL } from './constants';
+import ComboWorker from './comboWorker?worker';
 
 export function applyBullGoatMultiplier(poise) {
   return Math.trunc(poise * BULL_GOAT_TALISMAN_MULTIPLIER);
 }
 
 export function calculateTopCombos(method, data, callback, progressCallback) {
-  const worker = new Worker(new URL('./comboWorker.js', import.meta.url));
+  const worker = new ComboWorker();
   worker.onmessage = (e) => {
     if (e.data.messageType === 'progress') {
       progressCallback(e.data.data);

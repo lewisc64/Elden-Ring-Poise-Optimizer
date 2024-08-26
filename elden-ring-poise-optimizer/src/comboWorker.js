@@ -1,11 +1,8 @@
-const COMBO_LIMIT = 20;
+const COMBO_LIMIT = 50;
 
 let armorScoreCache = {};
 
 function calculateScoreOfArmor(armor, importances) {
-  if (armor === undefined) {
-    return 0;
-  }
   if (armorScoreCache[armor.name] !== undefined) {
     return armorScoreCache[armor.name];
   }
@@ -45,12 +42,15 @@ function getArmorOfSlot(armorData, slot) {
   return armorData.filter((x) => x.slot === slot);
 }
 
-function* createCombos(
+function createCombos(
   armorData,
-  scoreStrategy,
+  importances,
   filterStrategy,
   progressCallback
 ) {
+  const results = [];
+  let lowestScore = -Infinity;
+
   const headArmor = getArmorOfSlot(armorData, 'head');
   const bodyArmor = getArmorOfSlot(armorData, 'body');
   const armsArmor = getArmorOfSlot(armorData, 'arms');
@@ -77,8 +77,21 @@ function* createCombos(
               poise: totalPoise,
               weight: Math.round(totalWeight * 10) / 10,
             };
-            combo.score = scoreStrategy(combo);
-            yield combo;
+            const score = calculateScoreOfCombo(combo, importances);
+
+            if (score > lowestScore) {
+              combo.score = score;
+              for (let i = 0; i < results.length + 1; i++) {
+                if (results[i] === undefined || score < results[i].score) {
+                  results.splice(i, 0, combo);
+                  break;
+                }
+              }
+              if (results.length > COMBO_LIMIT) {
+                results.shift(1);
+              }
+              lowestScore = results[0].score;
+            }
           }
           if (++combosProcessed % progressCallInterval === 0) {
             progressCallback(combosProcessed, numberOfCombos);
@@ -87,13 +100,14 @@ function* createCombos(
       }
     }
   }
+  return results;
 }
 
-function getTopScoringArmorPiece(armorData, scoreStrategy) {
+function getTopScoringArmorPiece(armorData, importances) {
   let top = null;
   let topScore = -Infinity;
   for (let armor of armorData) {
-    const score = scoreStrategy({ [armor.slot]: armor });
+    const score = calculateScoreOfArmor(armor, importances);
     if (score > topScore) {
       topScore = score;
       top = armor;
@@ -102,12 +116,12 @@ function getTopScoringArmorPiece(armorData, scoreStrategy) {
   return top;
 }
 
-function getTopScoringCombo(armorData, scoreStrategy) {
+function getTopScoringCombo(armorData, importances) {
   const combo = {};
   for (let slot of ['head', 'body', 'arms', 'legs']) {
     combo[slot] = getTopScoringArmorPiece(
       getArmorOfSlot(armorData, slot),
-      scoreStrategy
+      importances
     );
     if (combo[slot] === null) {
       return null;
@@ -123,16 +137,16 @@ function getTopScoringCombo(armorData, scoreStrategy) {
         combo.legs.weight) *
         10
     ) / 10;
-  combo.score = scoreStrategy(combo);
+  combo.score = calculateScoreOfCombo(combo, importances);
   return combo;
 }
 
 onmessage = (e) => {
-  const scoreStrategy = (combo) =>
-    calculateScoreOfCombo(combo, e.data.data.importances);
-
   if (e.data.method === 'byNothing') {
-    const combo = getTopScoringCombo(e.data.data.armorData, scoreStrategy);
+    const combo = getTopScoringCombo(
+      e.data.data.armorData,
+      e.data.data.importances
+    );
     if (combo) {
       postMessage({ messageType: 'result', data: [combo] });
       return;
@@ -152,31 +166,15 @@ onmessage = (e) => {
     postMessage({ messageType: 'progress', data: { processed, total } });
   };
 
-  let lowestScore = -Infinity;
-  const combos = [];
-
-  for (let combo of createCombos(
+  armorScoreCache = {};
+  const combos = createCombos(
     e.data.data.armorData,
-    scoreStrategy,
+    e.data.data.importances,
     filterStrategy,
     progressCallback
-  )) {
-    if (combo.score > lowestScore) {
-      for (let i = 0; i < combos.length + 1; i++) {
-        if (combos[i] === undefined || combo.score < combos[i].score) {
-          combos.splice(i, 0, combo);
-          break;
-        }
-      }
-      if (combos.length > COMBO_LIMIT) {
-        combos.shift(1);
-      }
-      lowestScore = combos[0].score;
-    }
-  }
+  );
 
   combos.sort((a, b) => b.score - a.score);
-  armorScoreCache = {};
 
   postMessage({ messageType: 'result', data: combos });
 };
