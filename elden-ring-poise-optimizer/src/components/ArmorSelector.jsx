@@ -25,7 +25,13 @@ export const ArmorSelector = ({ title, armorData, updateSelected }) => {
   };
 
   return (
-    <div>
+    <div
+      css={css`
+        display: flex;
+        flex-direction: column;
+        row-gap: 0.5rem;
+      `}
+    >
       <h1
         css={css`
           margin: 0;
@@ -70,7 +76,7 @@ export const ArmorSelector = ({ title, armorData, updateSelected }) => {
           padding: 0;
           height: 25rem;
           overflow-y: scroll;
-          background-color: #333;
+          background-color: var(--panel-background-color);
           padding: 0.5rem;
         `}
       >

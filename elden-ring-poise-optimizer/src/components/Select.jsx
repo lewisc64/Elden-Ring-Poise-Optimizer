@@ -7,9 +7,8 @@ const Select = ({ onChange, defaultValue, className, children }) => {
         border: none;
         background-color: var(--control-background-color);
         font-size: 1rem;
-        margin-top: 0.5rem;
-        margin-bottom: 0.5rem;
         padding: 0.2rem;
+        min-width: 8rem;
       `}
       className={className}
       defaultValue={defaultValue}

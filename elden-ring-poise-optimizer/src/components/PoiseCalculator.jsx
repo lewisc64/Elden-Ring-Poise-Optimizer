@@ -26,17 +26,16 @@ import UnintrusiveText from './UnintrusiveText';
 
 const settingsSectionCss = css`
   display: grid;
-  grid-template-columns: auto auto;
-  grid-row-gap: 0.2rem;
+  grid-template-columns: auto 1fr;
+  grid-column-gap: 0.5rem;
+  grid-row-gap: 0.5rem;
   align-items: center;
-  background-color: #222;
-  padding: 1rem;
   > p {
     margin: 0;
   }
 `;
 
-const PoiseCalculator = ({ armorData }) => {
+const PoiseCalculator = ({ armorData, className }) => {
   const [comboFilterMethod, setComboFilterMethod] = useState(
     COMBO_FILTER_METHOD.BY_TARGET_POISE
   );
@@ -142,8 +141,12 @@ const PoiseCalculator = ({ armorData }) => {
   return (
     <div
       css={css`
-        max-width: 30rem;
+        display: flex;
+        flex-direction: column;
+        row-gap: 0.5rem;
+        max-width: 28rem;
       `}
+      className={className}
     >
       <CollapsablePanel title="Selection Settings" collapsedByDefault={false}>
         <div css={settingsSectionCss}>
@@ -246,7 +249,11 @@ const PoiseCalculator = ({ armorData }) => {
         </div>
       </CollapsablePanel>
       <CollapsablePanel title="Sorting Settings" collapsedByDefault={true}>
-        <p>
+        <p
+          css={css`
+            margin-top: 0;
+          `}
+        >
           <UnintrusiveText>
             Armor combinations are sorted by score. Armor is scored by
             multiplying each attribute by the relevant setting below and taking
@@ -300,6 +307,9 @@ const PoiseCalculator = ({ armorData }) => {
         />
       ) : (
         <Button
+          css={css`
+            align-self: start;
+          `}
           onClick={() => {
             setShouldCalculate(true);
           }}

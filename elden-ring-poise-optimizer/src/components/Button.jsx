@@ -8,8 +8,6 @@ const Button = ({ onClick, className, children }) => {
         transition: transform 0.1s;
         background-color: var(--control-background-color);
         font-size: 1rem;
-        margin-top: 0.5rem;
-        margin-bottom: 0.5rem;
         cursor: pointer;
         padding: 0.5rem;
         &:hover {

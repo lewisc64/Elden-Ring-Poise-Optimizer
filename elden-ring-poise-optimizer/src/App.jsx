@@ -27,6 +27,7 @@ const App = () => {
             --control-background-color: #888;
             --positive-control-background-color: #66a;
             --negative-control-background-color: #a66;
+            --panel-background-color: #2a2a2a;
           }
           body {
             font-family: sans-serif;
@@ -58,7 +59,12 @@ const App = () => {
         armorData={armorData}
         updateSelected={setSelectedArmor}
       />
-      <PoiseCalculator armorData={selectedArmor} />
+      <PoiseCalculator
+        css={css`
+          margin-top: 1rem;
+        `}
+        armorData={selectedArmor}
+      />
     </div>
   );
 };
