@@ -1,4 +1,4 @@
-export const DATA_VERSION = '1.14';
+export const DATA_VERSION = '1.14.1';
 
 export const DATA_SOURCE_LINK =
   'https://er-frame-data.nyasu.business/params?pt=EquipParamProtector';
